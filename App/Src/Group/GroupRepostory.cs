@@ -1,0 +1,89 @@
+using Microsoft.EntityFrameworkCore;
+using BackEndCodeTrix.Src.Data;
+namespace BackEndCodeTrix.Src.Group;
+
+public class GroupRepository : IGroupRepository
+{
+    private readonly ApplicationDbContext _context;
+
+    public GroupRepository(
+        ApplicationDbContext context
+    )
+    {
+        _context = context;
+    }
+
+    public async Task<List<GroupModel>> GetAllAsync()
+    {
+        return await _context.Groups
+            .Include(group => group.CreatedByMentor)
+            .Include(group => group.Students)
+            .Include(group => group.Tasks)
+            .Include(group => group.Lessons)
+            .ToListAsync();
+    }
+
+    public async Task<GroupModel?> GetByIdAsync(int id)
+    {
+        return await _context.Groups
+            .Include(group => group.CreatedByMentor)
+            .Include(group => group.Students)
+            .Include(group => group.Tasks)
+            .Include(group => group.Lessons)
+            .FirstOrDefaultAsync(
+                group => group.GroupId == id
+            );
+    }
+
+    public async Task<GroupModel> CreateAsync(
+        GroupModel group
+    )
+    {
+        _context.Groups.Add(group);
+
+        await _context.SaveChangesAsync();
+
+        return group;
+    }
+
+    public async Task<GroupModel> UpdateAsync(
+        GroupModel group
+    )
+    {
+        _context.Groups.Update(group);
+
+        await _context.SaveChangesAsync();
+
+        return group;
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var group = await _context.Groups
+            .FirstOrDefaultAsync(
+                group => group.GroupId == id
+            );
+
+        if (group is null)
+        {
+            return false;
+        }
+
+        _context.Groups.Remove(group);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> MentorExistsAsync(
+        int mentorId
+    )
+    {
+        return await _context.Users
+            .AnyAsync(user =>
+                user.UserId == mentorId &&
+                user.Role.RoleName == "Mentor"
+            );
+    }
+}
