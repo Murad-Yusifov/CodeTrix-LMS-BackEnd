@@ -1,24 +1,34 @@
-using Microsoft.EntityFrameworkCore;
+using BackEndCodeTrix.Mapping;
 using BackEndCodeTrix.Src.Data;
-using BackEndCodeTrix.Src.Users;
-using BackEndCodeTrix.Src.Group;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Database configuration
+// builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseNpgsql(
+//         builder.Configuration.GetConnectionString("DefaultConnection")
+//     )
+// );
+
+// DataBase configuration with SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfile>();
+});
 
-builder.Services.AddScoped<IUserService, UserService>();
+// Using without AutoMapper Previously
 
-builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+// builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IGroupService, GroupService>();
+// builder.Services.AddScoped<IUserService, UserService>();
+
+// builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+
+// builder.Services.AddScoped<IGroupService, GroupService>();
 
 
 builder.Services.AddEndpointsApiExplorer();

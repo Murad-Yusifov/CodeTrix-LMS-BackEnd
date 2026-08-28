@@ -1,3 +1,4 @@
+using AutoMapper;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
 namespace BackEndCodeTrix.Src.Users;
@@ -5,26 +6,21 @@ namespace BackEndCodeTrix.Src.Users;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(
+        IUserRepository userRepository,
+        IMapper mapper)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<UserResponseDto>> GetAllAsync()
     {
         var users = await _userRepository.GetAllAsync();
 
-        return users.Select(user => new UserResponseDto
-        {
-            UserId = user.UserId,
-            UserName = user.UserName,
-            UserSurName = user.UserSurName,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            RoleId = user.RoleId,
-            GroupId = user.GroupId
-        }).ToList();
+        return _mapper.Map<List<UserResponseDto>>(users);
     }
 
     public async Task<UserResponseDto?> GetByIdAsync(int id)
@@ -36,16 +32,7 @@ public class UserService : IUserService
             return null;
         }
 
-        return new UserResponseDto
-        {
-            UserId = user.UserId,
-            UserName = user.UserName,
-            UserSurName = user.UserSurName,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            RoleId = user.RoleId,
-            GroupId = user.GroupId
-        };
+        return _mapper.Map<UserResponseDto>(user);
     }
 
     public async Task<UserResponseDto> CreateAsync(CreateUserDto dto)
@@ -58,40 +45,21 @@ public class UserService : IUserService
             throw new Exception("User with this email already exists.");
         }
 
-        var user = new UserModel
-        {
-            UserName = dto.UserName,
-            UserSurName = dto.UserSurName,
-            Email = dto.Email,
-            PhoneNumber = dto.PhoneNumber,
+        var user = _mapper.Map<UserModel>(dto);
 
-            // Temporary for now
-            // We will add BCrypt later
-            PasswordHash = dto.Password,
-
-            RoleId = dto.RoleId,
-            GroupId = dto.GroupId
-        };
+        // Temporary for now
+        // We will add BCrypt later
+        user.PasswordHash = dto.Password;
 
         var createdUser = await _userRepository
             .CreateAsync(user);
 
-        return new UserResponseDto
-        {
-            UserId = createdUser.UserId,
-            UserName = createdUser.UserName,
-            UserSurName = createdUser.UserSurName,
-            Email = createdUser.Email,
-            PhoneNumber = createdUser.PhoneNumber,
-            RoleId = createdUser.RoleId,
-            GroupId = createdUser.GroupId
-        };
+        return _mapper.Map<UserResponseDto>(createdUser);
     }
 
     public async Task<UserResponseDto?> UpdateAsync(
         int id,
-        CreateUserDto dto
-    )
+        CreateUserDto dto)
     {
         var user = await _userRepository.GetByIdAsync(id);
 
@@ -100,26 +68,12 @@ public class UserService : IUserService
             return null;
         }
 
-        user.UserName = dto.UserName;
-        user.UserSurName = dto.UserSurName;
-        user.Email = dto.Email;
-        user.PhoneNumber = dto.PhoneNumber;
-        user.RoleId = dto.RoleId;
-        user.GroupId = dto.GroupId;
+        _mapper.Map(dto, user);
 
         var updatedUser = await _userRepository
             .UpdateAsync(user);
 
-        return new UserResponseDto
-        {
-            UserId = updatedUser.UserId,
-            UserName = updatedUser.UserName,
-            UserSurName = updatedUser.UserSurName,
-            Email = updatedUser.Email,
-            PhoneNumber = updatedUser.PhoneNumber,
-            RoleId = updatedUser.RoleId,
-            GroupId = updatedUser.GroupId
-        };
+        return _mapper.Map<UserResponseDto>(updatedUser);
     }
 
     public async Task<bool> DeleteAsync(int id)

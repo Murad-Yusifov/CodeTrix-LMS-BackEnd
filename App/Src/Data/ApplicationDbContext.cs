@@ -27,6 +27,10 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+         modelBuilder.Entity<RoleModel>()
+        .Property(r => r.RoleId)
+        .ValueGeneratedNever();
+
         // 👇 Tell EF Core what your Primary Key is (change 'Id' to your property name)
         modelBuilder.Entity<GroupModel>()
             .HasKey(g => g.GroupId); // or g.GroupId, etc.

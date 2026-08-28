@@ -1,39 +1,37 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace App.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class SwitchToSqlLitee : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "RoleModel",
+                name: "Roles",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleName = table.Column<string>(type: "text", nullable: false)
+                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RoleName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleModel", x => x.RoleId);
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Groups",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    GroupName = table.Column<string>(type: "text", nullable: false),
-                    DateOfCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedByMentorId = table.Column<int>(type: "integer", nullable: false)
+                    GroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GroupName = table.Column<string>(type: "TEXT", nullable: false),
+                    DateOfCreated = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreatedByMentorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,13 +42,13 @@ namespace App.Migrations
                 name: "Lessons",
                 columns: table => new
                 {
-                    LessonId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    GroupId = table.Column<int>(type: "integer", nullable: false),
-                    LessonStarts = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LessonEnds = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LocationType = table.Column<int>(type: "integer", nullable: false),
-                    Classroom = table.Column<string>(type: "text", nullable: false)
+                    LessonId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LessonStarts = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LessonEnds = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LocationType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Classroom = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,13 +65,14 @@ namespace App.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TaskName = table.Column<string>(type: "text", nullable: false),
-                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TaskLink = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    GroupId = table.Column<int>(type: "integer", nullable: false)
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TaskName = table.Column<string>(type: "TEXT", nullable: false),
+                    Deadline = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    TaskLink = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    GroupId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,15 +89,15 @@ namespace App.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserName = table.Column<string>(type: "text", nullable: false),
-                    UserSurName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
-                    GroupId = table.Column<int>(type: "integer", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserName = table.Column<string>(type: "TEXT", nullable: false),
+                    UserSurName = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    GroupId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,37 +108,38 @@ namespace App.Migrations
                         principalTable: "Groups",
                         principalColumn: "GroupId");
                     table.ForeignKey(
-                        name: "FK_Users_RoleModel_RoleId",
+                        name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "RoleModel",
+                        principalTable: "Roles",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentTaskModel",
+                name: "StudentTasks",
                 columns: table => new
                 {
-                    StudentTaskId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    TaskId = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    MentorComment = table.Column<string>(type: "text", nullable: true)
+                    StudentTaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubmissionLink = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubmittedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    MentorComment = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentTaskModel", x => x.StudentTaskId);
+                    table.PrimaryKey("PK_StudentTasks", x => x.StudentTaskId);
                     table.ForeignKey(
-                        name: "FK_StudentTaskModel_Tasks_TaskId",
+                        name: "FK_StudentTasks_Tasks_TaskId",
                         column: x => x.TaskId,
                         principalTable: "Tasks",
                         principalColumn: "TaskId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StudentTaskModel_Users_StudentId",
+                        name: "FK_StudentTasks_Users_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -157,13 +157,13 @@ namespace App.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentTaskModel_StudentId",
-                table: "StudentTaskModel",
+                name: "IX_StudentTasks_StudentId",
+                table: "StudentTasks",
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentTaskModel_TaskId",
-                table: "StudentTaskModel",
+                name: "IX_StudentTasks_TaskId",
+                table: "StudentTasks",
                 column: "TaskId");
 
             migrationBuilder.CreateIndex(
@@ -201,7 +201,7 @@ namespace App.Migrations
                 name: "Lessons");
 
             migrationBuilder.DropTable(
-                name: "StudentTaskModel");
+                name: "StudentTasks");
 
             migrationBuilder.DropTable(
                 name: "Tasks");
@@ -213,7 +213,7 @@ namespace App.Migrations
                 name: "Groups");
 
             migrationBuilder.DropTable(
-                name: "RoleModel");
+                name: "Roles");
         }
     }
 }
