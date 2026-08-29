@@ -1,4 +1,6 @@
 using AutoMapper;
+using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Users;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
@@ -18,7 +20,7 @@ public class MappingProfile : Profile
             );
 
         // Later:
-        // CreateMap<GroupModel, GroupResponseDto>();
+        CreateMap<GroupModel, GroupResponseDto>();
         // CreateMap<CreateGroupDto, GroupModel>();
         // CreateMap<TaskModel, TaskResponseDto>();
         // CreateMap<CreateTaskDto, TaskModel>();

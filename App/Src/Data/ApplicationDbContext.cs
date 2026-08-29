@@ -27,9 +27,9 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-         modelBuilder.Entity<RoleModel>()
-        .Property(r => r.RoleId)
-        .ValueGeneratedNever();
+        modelBuilder.Entity<RoleModel>()
+       .Property(r => r.RoleId)
+       .ValueGeneratedNever();
 
         // 👇 Tell EF Core what your Primary Key is (change 'Id' to your property name)
         modelBuilder.Entity<GroupModel>()
@@ -38,8 +38,20 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LessonModel>()
          .HasKey(l => l.LessonId);
 
+        // modelBuilder.Entity<StudentTaskModel>()
+        // .HasKey(l => l.StudentTaskId);
+
         modelBuilder.Entity<StudentTaskModel>()
-        .HasKey(l => l.StudentTaskId);
+       .HasOne(st => st.Student)
+       .WithMany()
+       .HasForeignKey(st => st.StudentId)
+       .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<StudentTaskModel>()
+            .HasOne(st => st.Task)
+            .WithMany(task => task.StudentTasks)
+            .HasForeignKey(st => st.TaskId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TaskModel>()
         .HasKey(l => l.TaskId);

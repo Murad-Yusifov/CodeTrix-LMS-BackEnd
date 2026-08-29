@@ -1,5 +1,8 @@
 using BackEndCodeTrix.Mapping;
 using BackEndCodeTrix.Src.Data;
+using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.Tasks;
+using BackEndCodeTrix.Src.Users;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,13 +25,18 @@ builder.Services.AddAutoMapper(cfg =>
 
 // Using without AutoMapper Previously
 
-// builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
-// builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
-// builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+
+// Tasks
+
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 
 builder.Services.AddEndpointsApiExplorer();
