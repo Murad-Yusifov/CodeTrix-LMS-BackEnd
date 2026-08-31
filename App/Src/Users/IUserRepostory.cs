@@ -1,3 +1,6 @@
+using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.Group.GroupDTO;
+
 namespace BackEndCodeTrix.Src.Users;
 
 public interface IUserRepository
@@ -13,4 +16,7 @@ public interface IUserRepository
     Task<UserModel> UpdateAsync(UserModel user);
 
     Task<bool> DeleteAsync(int id);
+
+    Task<GroupModel?> GetGroupByUserIdAsync(int userId);
+
 }

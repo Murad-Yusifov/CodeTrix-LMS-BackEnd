@@ -1,4 +1,5 @@
 using AutoMapper;
+using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
 namespace BackEndCodeTrix.Src.Users;
@@ -80,4 +81,20 @@ public class UserService : IUserService
     {
         return await _userRepository.DeleteAsync(id);
     }
+
+//  public async Task<List<UserResponseDto>> GetByGroupIdAsync(int id)
+// {
+//     var users = await _userRepository.GetByGroupIdAsync(id);
+
+//     return _mapper.Map<List<UserResponseDto>>(users);
+// }
+public async Task<GroupResponseDto?> GetGroupByUserIdAsync(int userId)
+{
+    var group = await _userRepository.GetGroupByUserIdAsync(userId);
+
+    if (group is null)
+        return null;
+
+    return _mapper.Map<GroupResponseDto>(group);
+}
 }

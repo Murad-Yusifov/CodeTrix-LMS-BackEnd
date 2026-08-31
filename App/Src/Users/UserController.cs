@@ -77,4 +77,23 @@ public class UserController : ControllerBase
 
         return NoContent();
     }
+
+    // [HttpGet("group/{groupId}")]
+    // public async Task<IActionResult> GetUsersByGroup(int groupId)
+    // {
+    //     var users = await _userService.GetByGroupIdAsync(groupId);
+
+    //     return Ok(users);
+    // }
+
+    [HttpGet("{userId}/group")]
+public async Task<IActionResult> GetUserGroup(int userId)
+{
+    var group = await _userService.GetGroupByUserIdAsync(userId);
+
+    if (group is null)
+        return NotFound("Group not found.");
+
+    return Ok(group);
+}
 }

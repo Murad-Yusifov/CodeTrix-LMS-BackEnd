@@ -191,37 +191,31 @@ public static class SeedData
         if (!context.Tasks.Any())
         {
             var tasks = new List<TaskModel>
-            {
-                new TaskModel
-                {
-                    TaskId = 1,
-                    TaskName = "Create React Login Page",
-                    Description =
-                        "Create a responsive login page using React and SCSS.",
-                    TaskLink =
-                        "https://github.com/codetrix/login-task",
-                    Deadline =
-                        DateTime.UtcNow.AddDays(7),
-                    CreatedAt =
-                        DateTime.UtcNow,
-                    GroupId = 1
-                },
+    {
+        new TaskModel
+        {
+            TaskId = 1,
+            TaskName = "Create React Login Page",
+            DeadLine = DateTime.UtcNow.AddDays(7),
+            DateTime = DateTime.UtcNow,
+            TaskStatus = "NotAssigned",
+            MentorComment =
+                "Create a responsive login page using React and SCSS.",
+            GroupId = 1
+        },
 
-                new TaskModel
-                {
-                    TaskId = 2,
-                    TaskName = "Create React Dashboard",
-                    Description =
-                        "Create a dashboard layout using React.",
-                    TaskLink =
-                        "https://github.com/codetrix/dashboard-task",
-                    Deadline =
-                        DateTime.UtcNow.AddDays(14),
-                    CreatedAt =
-                        DateTime.UtcNow,
-                    GroupId = 1
-                }
-            };
+        new TaskModel
+        {
+            TaskId = 2,
+            TaskName = "Create React Dashboard",
+            DeadLine = DateTime.UtcNow.AddDays(14),
+            DateTime = DateTime.UtcNow,
+            TaskStatus = "NotAssigned",
+            MentorComment =
+                "Create a dashboard layout using React.",
+            GroupId = 1
+        }
+    };
 
             context.Tasks.AddRange(tasks);
             context.SaveChanges();

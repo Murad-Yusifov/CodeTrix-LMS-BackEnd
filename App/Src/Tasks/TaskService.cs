@@ -1,3 +1,4 @@
+using AutoMapper;
 using BackEndCodeTrix.Src.Tasks.TaskDTO;
 
 namespace BackEndCodeTrix.Src.Tasks;
@@ -5,12 +6,15 @@ namespace BackEndCodeTrix.Src.Tasks;
 public class TaskService : ITaskService
 {
     private readonly ITaskRepository _taskRepository;
+    private readonly IMapper _mapper;
 
     public TaskService(
-        ITaskRepository taskRepository
+        ITaskRepository taskRepository,
+        IMapper mapper
     )
     {
         _taskRepository = taskRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<TaskResponseDto>> GetAllAsync()
@@ -18,18 +22,7 @@ public class TaskService : ITaskService
         var tasks = await _taskRepository
             .GetAllAsync();
 
-        return tasks
-            .Select(task => new TaskResponseDto
-            {
-                TaskId = task.TaskId,
-                TaskName = task.TaskName,
-                DeadLine = task.DeadLine,
-                DateTime = task.DateTime,
-                TaskStatus = task.TaskStatus,
-                MentorComment = task.MentorComment,
-                GroupId = task.GroupId
-            })
-            .ToList();
+        return _mapper.Map<List<TaskResponseDto>>(tasks);
     }
 
     public async Task<TaskResponseDto?> GetByIdAsync(
@@ -44,45 +37,21 @@ public class TaskService : ITaskService
             return null;
         }
 
-        return new TaskResponseDto
-        {
-            TaskId = task.TaskId,
-            TaskName = task.TaskName,
-            DeadLine = task.DeadLine,
-            DateTime = task.DateTime,
-            TaskStatus = task.TaskStatus,
-            MentorComment = task.MentorComment,
-            GroupId = task.GroupId
-        };
+        return _mapper.Map<TaskResponseDto>(task);
     }
 
     public async Task<TaskResponseDto> CreateAsync(
         CreateTaskDto dto
     )
     {
-        var task = new TaskModel
-        {
-            TaskName = dto.TaskName,
-            DeadLine = dto.DeadLine,
-            DateTime = dto.DateTime,
-            GroupId = dto.GroupId,
-            MentorComment = dto.MentorComment,
-            TaskStatus = "NotAssigned"
-        };
+        var task = _mapper.Map<TaskModel>(dto);
+
+            task.TaskStatus="NotAssiigned";
 
         var createdTask = await _taskRepository
             .CreateAsync(task);
 
-        return new TaskResponseDto
-        {
-            TaskId = createdTask.TaskId,
-            TaskName = createdTask.TaskName,
-            DeadLine = createdTask.DeadLine,
-            DateTime = createdTask.DateTime,
-            TaskStatus = createdTask.TaskStatus,
-            MentorComment = createdTask.MentorComment,
-            GroupId = createdTask.GroupId
-        };
+        return _mapper.Map<TaskResponseDto>(createdTask);
     }
 
     public async Task<TaskResponseDto?> UpdateAsync(
@@ -90,13 +59,7 @@ public class TaskService : ITaskService
         UpdateTaskDto dto
     )
     {
-        var task = new TaskModel
-        {
-            TaskName = dto.TaskName,
-            DeadLine = dto.DeadLine,
-            DateTime = dto.DateTime,
-            MentorComment = dto.MentorComment
-        };
+        var task = _mapper.Map<TaskModel>(dto);
 
         var updatedTask = await _taskRepository
             .UpdateAsync(id, task);
@@ -106,16 +69,7 @@ public class TaskService : ITaskService
             return null;
         }
 
-        return new TaskResponseDto
-        {
-            TaskId = updatedTask.TaskId,
-            TaskName = updatedTask.TaskName,
-            DeadLine = updatedTask.DeadLine,
-            DateTime = updatedTask.DateTime,
-            TaskStatus = updatedTask.TaskStatus,
-            MentorComment = updatedTask.MentorComment,
-            GroupId = updatedTask.GroupId
-        };
+        return _mapper.Map<TaskResponseDto>(updatedTask);
     }
 
     public async Task<bool> DeleteAsync(int id)

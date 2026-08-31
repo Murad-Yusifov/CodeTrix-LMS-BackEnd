@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
+using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Group;
 
 namespace BackEndCodeTrix.Src.Users;
 
@@ -68,4 +70,21 @@ public class UserRepository : IUserRepository
 
         return true;
     }
+
+    // public async Task<List<UserModel>> GetByGroupIdAsync(int groupId)
+    // {
+    //     return await _context.Users
+    //         .Include(user => user.Role)
+    //         .Include(user => user.Group)
+    //         .Where(user => user.GroupId == groupId)
+    //         .ToListAsync();
+    // }
+
+    public async Task<GroupModel?> GetGroupByUserIdAsync(int userId)
+{
+    return await _context.Users
+        .Where(u => u.UserId == userId)
+        .Select(u => u.Group)
+        .FirstOrDefaultAsync();
+}
 }

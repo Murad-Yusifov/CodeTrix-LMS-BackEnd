@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BackEndCodeTrix.Src.Users;
 
 namespace BackEndCodeTrix.Src.Tasks;
 
-public class StudentTaskModel
+public class    StudentTaskModel
 {
+    [Key]
     public int StudentTaskId { get; set; }
 
     public int StudentId { get; set; }
@@ -22,5 +25,6 @@ public class StudentTaskModel
     // Navigation properties
     public UserModel Student { get; set; } = null!;
 
+    [ForeignKey(nameof(TaskId))]
     public TaskModel Task { get; set; } = null!;
 }

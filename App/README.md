@@ -430,3 +430,53 @@ dotnet run
 5. **Swagger UI:** Navigating to `http://localhost:5000/swagger` will expose all active endpoints.
 
 Example Structure: https://github.com/kawser2133/clean-structured-project/tree/development/Project.Infrastructure
+
+
+
+
+<!-- EndPoints -->
+
+/api
+│
+├── User
+│   ├── GET    /api/User
+│   ├── GET    /api/User/{id}
+│   ├── POST   /api/User
+│   ├── PUT    /api/User/{id}
+│   ├── DELETE /api/User/{id}
+│   └── GET    /api/User/group/{groupId}
+│
+├── Group
+│   ├── GET    /api/Group
+│   ├── GET    /api/Group/{id}
+│   ├── POST   /api/Group
+│   ├── PUT    /api/Group/{id}
+│   └── DELETE /api/Group/{id}
+│
+├── Task
+│   ├── GET    /api/Task
+│   ├── GET    /api/Task/{id}
+│   ├── GET    /api/Task/group/{groupId}
+│   ├── POST   /api/Task
+│   ├── PUT    /api/Task/{id}
+│   └── DELETE /api/Task/{id}
+│
+├── StudentTask
+│   ├── GET    /api/StudentTask
+│   ├── GET    /api/StudentTask/{id}
+│   ├── GET    /api/StudentTask/student/{studentId}
+│   ├── POST   /api/StudentTask
+│   ├── PUT    /api/StudentTask/{id}
+│   └── DELETE /api/StudentTask/{id}
+│
+├── Lesson
+│   ├── GET    /api/Lesson
+│   ├── GET    /api/Lesson/{id}
+│   ├── GET    /api/Lesson/group/{groupId}
+│   ├── POST   /api/Lesson
+│   ├── PUT    /api/Lesson/{id}
+│   └── DELETE /api/Lesson/{id}
+│
+└── Role
+    ├── GET    /api/Role
+    └── GET    /api/Role/{id}
