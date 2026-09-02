@@ -87,13 +87,24 @@ public class UserController : ControllerBase
     // }
 
     [HttpGet("{userId}/group")]
-public async Task<IActionResult> GetUserGroup(int userId)
-{
-    var group = await _userService.GetGroupByUserIdAsync(userId);
+    public async Task<IActionResult> GetUserGroup(int userId)
+    {
+        var group = await _userService.GetGroupByUserIdAsync(userId);
 
-    if (group is null)
-        return NotFound("Group not found.");
+        if (group is null)
+            return NotFound("Group not found.");
 
-    return Ok(group);
-}
+        return Ok(group);
+    }
+
+
+    [HttpGet("{userId}/studentTasks")]
+    public async Task<IActionResult> GetStudentTasksByStudentId(int userId)
+    {
+        var tasks = await _userService
+            .GetAllStudentTasksByStudentIdAsync(userId);
+
+        return Ok(tasks);
+    }
+
 }

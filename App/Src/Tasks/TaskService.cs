@@ -1,5 +1,7 @@
 using AutoMapper;
+using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Tasks.TaskDTO;
+using SQLitePCL;
 
 namespace BackEndCodeTrix.Src.Tasks;
 
@@ -76,5 +78,16 @@ public class TaskService : ITaskService
     {
         return await _taskRepository
             .DeleteAsync(id);
+    }
+
+    public async Task<GroupResponseDto?> GetGroupByTaskIdAsync(int taskId)
+    {
+        var group = await _taskRepository.GetGroupByTaksIdAsync(taskId);
+        if(group is null)
+        {
+            return null;
+        }
+
+        return  _mapper.Map<GroupResponseDto>(group);
     }
 }

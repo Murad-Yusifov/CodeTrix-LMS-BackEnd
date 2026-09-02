@@ -1,6 +1,7 @@
 
 
 using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
 namespace BackEndCodeTrix.Src.Users;
@@ -20,4 +21,6 @@ public interface IUserService
 
     Task<bool> DeleteAsync(int id);
     Task<GroupResponseDto?> GetGroupByUserIdAsync(int userId);
+
+    Task<List<StudentTaskResponseDto>> GetAllStudentTasksByStudentIdAsync(int userId);
 }

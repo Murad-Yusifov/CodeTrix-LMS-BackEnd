@@ -1,3 +1,6 @@
+using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.Group.GroupDTO;
+
 namespace BackEndCodeTrix.Src.Tasks;
 
 public interface ITaskRepository
@@ -14,4 +17,5 @@ public interface ITaskRepository
     );
 
     Task<bool> DeleteAsync(int id);
+    Task<GroupModel?> GetGroupByTaksIdAsync(int taskId);
 }

@@ -29,4 +29,5 @@ public interface IStudentTaskRepository
     Task<bool> DeleteAsync(
         int id
     );
+
 }

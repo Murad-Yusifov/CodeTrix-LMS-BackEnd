@@ -16,8 +16,8 @@ public class MappingProfile : Profile
         // User mappings
         CreateMap<UserModel, UserResponseDto>()
         .ForMember(
-            dest=>dest.GroupId,
-            opt=>opt.MapFrom(src=>src.GroupId)
+            dest => dest.GroupId,
+            opt => opt.MapFrom(src => src.GroupId)
         );
 
         CreateMap<CreateUserDto, UserModel>()
@@ -52,6 +52,10 @@ public class MappingProfile : Profile
                  : null
          )
      )
+      .ForMember(
+    dest => dest.TaskDateTime,
+    opt => opt.MapFrom(src => src.Task.DateTime)
+)
              // .ForMember(
              //     dest => dest.DeadLine,
              //     opt => opt.MapFrom(
@@ -63,15 +67,19 @@ public class MappingProfile : Profile
                  opt => opt.MapFrom(
                      src => src.Task!.MentorComment
                  )
-            //  )
-            //  .ForMember(
-            //      dest => dest.StudentComment,
-            //      opt => opt.MapFrom(
-            //          src => src.Task
-            //      )
+             //  )
+             //  .ForMember(
+             //      dest => dest.StudentComment,
+             //      opt => opt.MapFrom(
+             //          src => src.Task
+             //      )
              );
 
-        CreateMap<TaskModel, TaskResponseDto>();
+        CreateMap<TaskModel, TaskResponseDto>()
+         .ForMember(
+            dest => dest.GroupId,
+            opt => opt.MapFrom(src => src.GroupId)
+        );
         CreateMap<CreateTaskDto, TaskModel>();
         CreateMap<UpdateTaskDto, TaskModel>();
 

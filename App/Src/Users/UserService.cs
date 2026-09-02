@@ -1,5 +1,6 @@
 using AutoMapper;
 using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
 namespace BackEndCodeTrix.Src.Users;
@@ -82,19 +83,28 @@ public class UserService : IUserService
         return await _userRepository.DeleteAsync(id);
     }
 
-//  public async Task<List<UserResponseDto>> GetByGroupIdAsync(int id)
-// {
-//     var users = await _userRepository.GetByGroupIdAsync(id);
+    //  public async Task<List<UserResponseDto>> GetByGroupIdAsync(int id)
+    // {
+    //     var users = await _userRepository.GetByGroupIdAsync(id);
 
-//     return _mapper.Map<List<UserResponseDto>>(users);
-// }
-public async Task<GroupResponseDto?> GetGroupByUserIdAsync(int userId)
-{
-    var group = await _userRepository.GetGroupByUserIdAsync(userId);
+    //     return _mapper.Map<List<UserResponseDto>>(users);
+    // }
+    public async Task<GroupResponseDto?> GetGroupByUserIdAsync(int userId)
+    {
+        var group = await _userRepository.GetGroupByUserIdAsync(userId);
 
-    if (group is null)
-        return null;
+        if (group is null)
+            return null;
 
-    return _mapper.Map<GroupResponseDto>(group);
-}
+        return _mapper.Map<GroupResponseDto>(group);
+    }
+
+    public async Task<List<StudentTaskResponseDto>> GetAllStudentTasksByStudentIdAsync(int userId)
+    {
+        var studentTasks = await _userRepository.GetAllStudentTasksByStudentIdAsync(userId);
+
+        return _mapper.Map<List<StudentTaskResponseDto>>(
+            studentTasks
+        );
+    }
 }

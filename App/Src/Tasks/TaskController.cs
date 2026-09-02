@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using BackEndCodeTrix.Src.Tasks.TaskDTO;
+using BackEndCodeTrix.Src.Group.GroupDTO;
 
 namespace BackEndCodeTrix.Src.Tasks;
 
@@ -99,5 +100,16 @@ public class TaskController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet("{taskId}/group")]
+    public async Task<IActionResult> GetTaskGroup(int taskId)
+    {
+        var group = await _taskService.GetGroupByTaskIdAsync(taskId);
+        if (group is null)
+            return NotFound("Group is not found");
+
+        return Ok(group);
+
     }
 }

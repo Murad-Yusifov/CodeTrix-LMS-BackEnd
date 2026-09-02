@@ -8,6 +8,7 @@ public class StudentTaskResponseDto
 
     public int TaskId { get; set; }
     public string? TaskName { get; set; }
+    public DateTime TaskDateTime { get; set; }
 
     public string Status { get; set; } = string.Empty;
 

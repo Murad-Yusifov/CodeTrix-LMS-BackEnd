@@ -444,7 +444,7 @@ Example Structure: https://github.com/kawser2133/clean-structured-project/tree/d
 │   ├── POST   /api/User
 │   ├── PUT    /api/User/{id}
 │   ├── DELETE /api/User/{id}
-│   └── GET    /api/User/group/{groupId}
+│   └── GET    /api/User/group/{groupId} ?/Updated: api/user/id/group
 │
 ├── Group
 │   ├── GET    /api/Group
@@ -480,3 +480,10 @@ Example Structure: https://github.com/kawser2133/clean-structured-project/tree/d
 └── Role
     ├── GET    /api/Role
     └── GET    /api/Role/{id}
+
+    {
+  "sub": "15",
+  "email": "mentor@example.com",
+  "name": "John Smith",
+  "role": "Mentor"
+}

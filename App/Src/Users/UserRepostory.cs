@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
-using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.Tasks;
 
 namespace BackEndCodeTrix.Src.Users;
 
@@ -81,10 +81,32 @@ public class UserRepository : IUserRepository
     // }
 
     public async Task<GroupModel?> GetGroupByUserIdAsync(int userId)
-{
-    return await _context.Users
-        .Where(u => u.UserId == userId)
-        .Select(u => u.Group)
-        .FirstOrDefaultAsync();
-}
+    {
+        return await _context.Users
+            .Where(u => u.UserId == userId)
+            .Include(u => u.Group)
+                .ThenInclude(g => g.CreatedByMentor)
+            .Select(u => u.Group)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<StudentTaskModel>?> GetAllStudentTasksByStudentIdAsync(
+        int userId
+    )
+    {
+        var studentExists = await _context.Users
+            .AnyAsync(u => u.UserId == userId);
+
+        if (!studentExists)
+        {
+            return null;
+        }
+
+        return await _context.StudentTasks
+            .AsNoTracking()
+            .Where(st => st.StudentId == userId)
+            .Include(st => st.Task)
+            .Include(st => st.Student)
+            .ToListAsync();
+    }
 }

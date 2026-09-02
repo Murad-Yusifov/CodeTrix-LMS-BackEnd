@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
+using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Group;
 
 namespace BackEndCodeTrix.Src.Tasks;
 
@@ -81,5 +83,24 @@ public class TaskRepository : ITaskRepository
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<GroupModel?> GetGroupByTaksIdAsync(int taskId)
+    {
+        return await _context.Tasks
+        .Where(t => t.TaskId == taskId)
+
+        .Include(t => t.Group)
+            .ThenInclude(g => g.CreatedByMentor)
+
+        .Include(t => t.Group)
+            .ThenInclude(g => g.Students)
+        .Include(t => t.Group)
+            .ThenInclude(g => g.Tasks)
+        .Include(t => t.Group)
+            .ThenInclude(g => g.Lessons)
+        .Select(t => t.Group)
+        .FirstOrDefaultAsync();
+
     }
 }
