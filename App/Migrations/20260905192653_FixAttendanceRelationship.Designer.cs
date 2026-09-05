@@ -3,6 +3,7 @@ using System;
 using BackEndCodeTrix.Src.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260905192653_FixAttendanceRelationship")]
+    partial class FixAttendanceRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
@@ -227,7 +230,7 @@ namespace App.Migrations
 
             modelBuilder.Entity("AttendanceModel", b =>
                 {
-                    b.HasOne("BackEndCodeTrix.Src.LessonSchedule.LessonModel", "LessonName")
+                    b.HasOne("BackEndCodeTrix.Src.LessonSchedule.LessonModel", "Lesson")
                         .WithMany()
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -239,7 +242,7 @@ namespace App.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("LessonName");
+                    b.Navigation("Lesson");
 
                     b.Navigation("Student");
                 });

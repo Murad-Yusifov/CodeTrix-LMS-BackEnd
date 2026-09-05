@@ -1,3 +1,5 @@
+using BackEndCodeTrix.Src.Users;
+
 namespace BackEndCodeTrix.Src.Group;
 
 public interface IGroupRepository
@@ -13,4 +15,6 @@ public interface IGroupRepository
     Task<bool> DeleteAsync(int id);
 
     Task<bool> MentorExistsAsync(int mentorId);
+     Task<List<UserModel>?> GetStudentsByGroupId(int groupId);
+
 }

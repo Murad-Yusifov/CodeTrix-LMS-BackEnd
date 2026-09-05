@@ -1,6 +1,8 @@
 
 
 using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Lesson;
+using BackEndCodeTrix.Src.Lesson.LessonDTO;
 using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
@@ -14,13 +16,22 @@ public interface IUserService
 
     Task<UserResponseDto> CreateAsync(CreateUserDto dto);
 
-    Task<UserResponseDto?> UpdateAsync(
-        int id,
-        CreateUserDto dto
-    );
+    // Task<UserResponseDto?> UpdateAsync(
+    //     int id,
+    //     CreateUserDto dto
+    // );
+
+    Task<(UserResponseDto? User, string? Error)> UpdateAsync(
+   int id,
+   UpdateUserDto dto);
 
     Task<bool> DeleteAsync(int id);
     Task<GroupResponseDto?> GetGroupByUserIdAsync(int userId);
 
     Task<List<StudentTaskResponseDto>> GetAllStudentTasksByStudentIdAsync(int userId);
+    // Task<List<AttendanceResponseDto>>
+    // GetStudentAttendanceAsync(int userId);
+
+    Task<List<AttendanceResponseDto>> GetStudentAttendanceByStudentId(int studentId);
+
 }

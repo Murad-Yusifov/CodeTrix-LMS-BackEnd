@@ -1,4 +1,5 @@
 using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Users.UserDTO;
 
 namespace BackEndCodeTrix.Src.Group;
 
@@ -18,4 +19,7 @@ public interface IGroupService
     );
 
     Task<bool> DeleteAsync(int id);
+
+        Task<List<UserResponseDto>> GetStudentsByGroupId(int groupId);
+
 }

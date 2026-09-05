@@ -18,5 +18,7 @@ public class LessonModel
 
     // Zoom, Teams, Google Meet link
     // OR classroom number
-    public string Classroom { get; set; } = string.Empty;
+    public string? Classroom { get; set; } = string.Empty;
+
+    
 }

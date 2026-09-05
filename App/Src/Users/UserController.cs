@@ -51,20 +51,19 @@ public class UserController : ControllerBase
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(
-        int id,
-        CreateUserDto dto
-    )
+    int id,
+    UpdateUserDto dto)
     {
-        var user = await _userService.UpdateAsync(id, dto);
+        var result = await _userService.UpdateAsync(id, dto);
 
-        if (user is null)
-        {
+        if (result.Error == "UserNotFound")
             return NotFound("User not found.");
-        }
 
-        return Ok(user);
+        if (result.Error == "GroupNotFound")
+            return BadRequest("Group not found.");
+
+        return Ok(result.User);
     }
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
@@ -105,6 +104,18 @@ public class UserController : ControllerBase
             .GetAllStudentTasksByStudentIdAsync(userId);
 
         return Ok(tasks);
+    }
+
+    [HttpGet("{userId}/studentAttendance")]
+    public async Task<IActionResult> GetStudentAttendanceByUserId(int userId)
+    {
+        var attendance = await _userService
+            .GetStudentAttendanceByStudentId(userId);
+
+        if (attendance is null)
+            return NotFound("The Student Attendance Records are empty");
+
+        return Ok(attendance);
     }
 
 }

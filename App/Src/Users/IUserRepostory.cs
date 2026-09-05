@@ -1,26 +1,28 @@
 using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;
 
 namespace BackEndCodeTrix.Src.Users;
 
 public interface IUserRepository
 {
-    Task<List<UserModel>> GetAllAsync();
+  Task<List<UserModel>> GetAllAsync();
 
-    Task<UserModel?> GetByIdAsync(int id);
+  Task<UserModel?> GetByIdAsync(int id);
 
-    Task<UserModel?> GetByEmailAsync(string email);
+  Task<UserModel?> GetByEmailAsync(string email);
 
-    Task<UserModel> CreateAsync(UserModel user);
+  Task<UserModel> CreateAsync(UserModel user);
 
-    Task<UserModel> UpdateAsync(UserModel user);
+  Task<UserModel?> UpdateAsync(UserModel user);
 
-    Task<bool> DeleteAsync(int id);
- 
-    Task<GroupModel?> GetGroupByUserIdAsync(int userId);
+  Task<bool> DeleteAsync(int id);
 
-    Task<List<StudentTaskModel>?> GetAllStudentTasksByStudentIdAsync(
-    int userId
-);
+  Task<GroupModel?> GetGroupByUserIdAsync(int userId);
+
+  Task<List<StudentTaskModel>?> GetAllStudentTasksByStudentIdAsync(
+  int userId);
+
+  Task<List<AttendanceModel>> GetStudentAttendanceAsync(int userId);
 
 }

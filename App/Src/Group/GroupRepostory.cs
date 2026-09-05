@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
+using BackEndCodeTrix.Src.Users;
 namespace BackEndCodeTrix.Src.Group;
 
 public class GroupRepository : IGroupRepository
@@ -85,5 +86,13 @@ public class GroupRepository : IGroupRepository
                 user.UserId == mentorId &&
                 user.Role.RoleName == "Mentor"
             );
+    }
+
+    public async Task<List<UserModel>?> GetStudentsByGroupId(int groupId)
+    {
+        return await _context.Users.
+  AsNoTracking()
+  .Where(st => st.GroupId == groupId)
+  .ToListAsync();
     }
 }

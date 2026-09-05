@@ -108,4 +108,12 @@ public class GroupController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("group/{groupId}/students")]
+    public async Task<IActionResult> GetStudentsByGroupId(int groupId)
+    {
+        var students = await _groupService.GetStudentsByGroupId(groupId);
+
+        return Ok(students);
+    }
 }

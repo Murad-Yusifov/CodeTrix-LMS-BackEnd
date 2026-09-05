@@ -1,4 +1,5 @@
 using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;
 
 namespace BackEndCodeTrix.Src.Users;
@@ -35,4 +36,16 @@ public class UserModel
     // Groups created by this mentor
     public ICollection<GroupModel> CreatedGroups { get; set; }
         = new List<GroupModel>();
+
+
+    // Student's attendance records
+    public ICollection<AttendanceModel> Attendances { get; set; }
+        = new List<AttendanceModel>();
+
+    // public int AttendanceId {get; set;}
+    // Student's attendances
+    //         public ICollection<Attendance?> StudentAttendance
+    // { get; set; }
+
+
 }

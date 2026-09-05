@@ -10,6 +10,11 @@ public class GroupModel
 
     public string GroupName { get; set; } = string.Empty;
 
+
+    // public CourseModel CourseId {get; set;} 
+
+    // public CourseModel Course {get; set;}  =null!;
+
     public DateTime DateOfCreated { get; set; }
 
     // Mentor who created the group

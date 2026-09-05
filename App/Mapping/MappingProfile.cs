@@ -1,6 +1,8 @@
 using AutoMapper;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Lesson.LessonDTO;
+using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Tasks.TaskDTO;
@@ -14,17 +16,15 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         // User mappings
-        CreateMap<UserModel, UserResponseDto>()
-        .ForMember(
-            dest => dest.GroupId,
-            opt => opt.MapFrom(src => src.GroupId)
-        );
+        CreateMap<UserModel, UserResponseDto>();
 
         CreateMap<CreateUserDto, UserModel>()
             .ForMember(
                 dest => dest.PasswordHash,
                 opt => opt.MapFrom(src => src.Password)
             );
+
+        CreateMap<UpdateUserDto, UserModel>();
 
         CreateMap<GroupModel, GroupResponseDto>()
         .ForMember(destination => destination.CreatedByMentorName,
@@ -82,6 +82,57 @@ public class MappingProfile : Profile
         );
         CreateMap<CreateTaskDto, TaskModel>();
         CreateMap<UpdateTaskDto, TaskModel>();
+
+        CreateMap<CreateLessonDto, LessonModel>()
+    .ForMember(
+        dest => dest.LocationType,
+        opt => opt.MapFrom(src => Enum.Parse<LocationType>(src.Type, true))
+    )
+    .ForMember(
+        dest => dest.Classroom,
+        opt => opt.MapFrom(src => src.ClassRoom)
+    );
+
+        CreateMap<UpdateLessonDto, LessonModel>();
+
+        CreateMap<LessonModel, LessonResponseDto>()
+    .ForMember(
+        dest => dest.Type,
+        opt => opt.MapFrom(src => src.LocationType.ToString())
+    )
+    .ForMember(
+        dest => dest.ClassRoom,
+        opt => opt.MapFrom(src => src.Classroom)
+    );
+
+
+        CreateMap<AttendanceModel, AttendanceResponseDto>()
+               .ForMember(
+                   dest => dest.StudentName,
+                   opt => opt.MapFrom(
+                       src => src.Student.UserName
+                   )
+               )
+               .ForMember(
+                   dest => dest.StudentSurname,
+                   opt => opt.MapFrom(
+                       src => src.Student.UserSurName
+                   )
+               )
+               .ForMember(
+                   dest => dest.LessonName,
+                   opt => opt.MapFrom(
+                       src => src.LessonName
+                   )
+               )
+                  .ForMember(
+           dest => dest.StudentName,
+           opt => opt.MapFrom(src => src.Student.UserName)
+       )
+       .ForMember(
+           dest => dest.StudentSurname,
+           opt => opt.MapFrom(src => src.Student.UserSurName)
+       );
 
     }
 }

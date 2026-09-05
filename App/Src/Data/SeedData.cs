@@ -1,5 +1,6 @@
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Tasks;
+using BackEndCodeTrix.Src.Lesson;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Users;
 
@@ -143,7 +144,7 @@ public static class SeedData
         }
 
         context.SaveChanges();
-
+        
 
         // =====================================================
         // 3. GROUPS
@@ -191,31 +192,31 @@ public static class SeedData
         if (!context.Tasks.Any())
         {
             var tasks = new List<TaskModel>
-    {
-        new TaskModel
-        {
-            TaskId = 1,
-            TaskName = "Create React Login Page",
-            DeadLine = DateTime.UtcNow.AddDays(7),
-            DateTime = DateTime.UtcNow,
-            TaskStatus = "NotAssigned",
-            MentorComment =
-                "Create a responsive login page using React and SCSS.",
-            GroupId = 1
-        },
+            {
+                new TaskModel
+                {
+                    TaskId = 1,
+                    TaskName = "Create React Login Page",
+                    DeadLine = DateTime.UtcNow.AddDays(7),
+                    DateTime = DateTime.UtcNow,
+                    TaskStatus = "NotAssigned",
+                    MentorComment =
+                        "Create a responsive login page using React and SCSS.",
+                    GroupId = 1
+                },
 
-        new TaskModel
-        {
-            TaskId = 2,
-            TaskName = "Create React Dashboard",
-            DeadLine = DateTime.UtcNow.AddDays(14),
-            DateTime = DateTime.UtcNow,
-            TaskStatus = "NotAssigned",
-            MentorComment =
-                "Create a dashboard layout using React.",
-            GroupId = 1
-        }
-    };
+                new TaskModel
+                {
+                    TaskId = 2,
+                    TaskName = "Create React Dashboard",
+                    DeadLine = DateTime.UtcNow.AddDays(14),
+                    DateTime = DateTime.UtcNow,
+                    TaskStatus = "NotAssigned",
+                    MentorComment =
+                        "Create a dashboard layout using React.",
+                    GroupId = 1
+                }
+            };
 
             context.Tasks.AddRange(tasks);
             context.SaveChanges();
@@ -332,6 +333,75 @@ public static class SeedData
             };
 
             context.Lessons.AddRange(lessons);
+            context.SaveChanges();
+        }
+
+        // =====================================================
+        // 8. ATTENDANCE
+        // =====================================================
+
+        if (!context.StudentAttendances.Any())
+        {
+            var attendances = new List<AttendanceModel>
+            {
+                // Lesson 1
+                new AttendanceModel
+                {
+                    AttendanceId = 1,
+                    StudentId = 3,
+                    LessonId = 1,
+                    Status = AttendanceStatus.Present,
+                    RecordedAt = DateTime.UtcNow
+                },
+
+                new AttendanceModel
+                {
+                    AttendanceId = 2,
+                    StudentId = 4,
+                    LessonId = 1,
+                    Status = AttendanceStatus.Absent,
+                    RecordedAt = DateTime.UtcNow
+                },
+
+                new AttendanceModel
+                {
+                    AttendanceId = 3,
+                    StudentId = 5,
+                    LessonId = 1,
+                    Status = AttendanceStatus.Late,
+                    RecordedAt = DateTime.UtcNow
+                },
+
+                // Lesson 2
+                new AttendanceModel
+                {
+                    AttendanceId = 4,
+                    StudentId = 3,
+                    LessonId = 2,
+                    Status = AttendanceStatus.Present,
+                    RecordedAt = DateTime.UtcNow
+                },
+
+                new AttendanceModel
+                {
+                    AttendanceId = 5,
+                    StudentId = 4,
+                    LessonId = 2,
+                    Status = AttendanceStatus.Present,
+                    RecordedAt = DateTime.UtcNow
+                },
+
+                new AttendanceModel
+                {
+                    AttendanceId = 6,
+                    StudentId = 5,
+                    LessonId = 2,
+                    Status = AttendanceStatus.Absent,
+                    RecordedAt = DateTime.UtcNow
+                }
+            };
+
+            context.StudentAttendances.AddRange(attendances);
             context.SaveChanges();
         }
     }

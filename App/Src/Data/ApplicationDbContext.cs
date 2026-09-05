@@ -23,6 +23,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<LessonModel> Lessons { get; set; }
     public DbSet<RoleModel> Roles { get; set; }
     public DbSet<StudentTaskModel> StudentTasks { get; set; }
+    public DbSet<AttendanceModel> StudentAttendances { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -69,5 +70,21 @@ public class ApplicationDbContext : DbContext
             .WithMany(u => u.CreatedGroups)
             .HasForeignKey(g => g.CreatedByMentorId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Attendance Existing Relationship code
+        modelBuilder.Entity<AttendanceModel>()
+     .HasKey(a => a.AttendanceId);
+
+        modelBuilder.Entity<AttendanceModel>()
+            .HasOne(a => a.Student)
+            .WithMany(u => u.Attendances)
+            .HasForeignKey(a => a.StudentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AttendanceModel>()
+            .HasOne(a => a.LessonName)
+            .WithMany()
+            .HasForeignKey(a => a.LessonId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Tasks;
+using BackEndCodeTrix.Src.LessonSchedule;
 
 namespace BackEndCodeTrix.Src.Users;
 
@@ -19,6 +20,8 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .Include(user => user.Role)
             .Include(user => user.Group)
+            .Include(type => type.Group)
+            // .Include(attendance =>attendance.Attendance)
             .ToListAsync();
     }
 
@@ -45,9 +48,18 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task<UserModel> UpdateAsync(UserModel user)
+    public async Task<UserModel?> UpdateAsync(UserModel user)
     {
+        var groupExists = await _context.Groups
+     .AnyAsync(g => g.GroupId == user.GroupId);
+
+        if (!groupExists)
+        {
+            return null;
+        }
+
         _context.Users.Update(user);
+
 
         await _context.SaveChangesAsync();
 
@@ -82,12 +94,10 @@ public class UserRepository : IUserRepository
 
     public async Task<GroupModel?> GetGroupByUserIdAsync(int userId)
     {
-        return await _context.Users
-            .Where(u => u.UserId == userId)
-            .Include(u => u.Group)
-                .ThenInclude(g => g.CreatedByMentor)
-            .Select(u => u.Group)
-            .FirstOrDefaultAsync();
+        return await _context.Groups
+            .Include(g => g.CreatedByMentor)
+            .FirstOrDefaultAsync(g =>
+                g.Students.Any(s => s.UserId == userId));
     }
 
     public async Task<List<StudentTaskModel>?> GetAllStudentTasksByStudentIdAsync(
@@ -108,5 +118,17 @@ public class UserRepository : IUserRepository
             .Include(st => st.Task)
             .Include(st => st.Student)
             .ToListAsync();
+    }
+
+    public async Task<List<AttendanceModel>> GetStudentAttendanceAsync(int userId)
+    {
+    return await _context.StudentAttendances
+        .AsNoTracking()
+        .Where(a => a.StudentId == userId)
+        .Include(a => a.Student)
+        .Include(a => a.LessonName)
+        .ToListAsync();
+
+
     }
 }

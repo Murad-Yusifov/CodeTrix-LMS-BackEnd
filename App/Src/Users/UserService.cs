@@ -1,5 +1,6 @@
 using AutoMapper;
 using BackEndCodeTrix.Src.Group.GroupDTO;
+using BackEndCodeTrix.Src.Lesson.LessonDTO;
 using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Users.UserDTO;
 
@@ -17,6 +18,18 @@ public class UserService : IUserService
         _userRepository = userRepository;
         _mapper = mapper;
     }
+
+    public async Task<List<AttendanceResponseDto>>
+    GetStudentAttendanceAsync(int userId)
+{
+    var attendances =
+        await _userRepository
+            .GetStudentAttendanceAsync(userId);
+
+    return _mapper.Map<List<AttendanceResponseDto>>(
+        attendances
+    );
+}
 
     public async Task<List<UserResponseDto>> GetAllAsync()
     {
@@ -59,23 +72,23 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDto>(createdUser);
     }
 
-    public async Task<UserResponseDto?> UpdateAsync(
-        int id,
-        CreateUserDto dto)
+    public async Task<(UserResponseDto? User, string? Error)> UpdateAsync(
+    int id,
+    UpdateUserDto dto)
     {
         var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null)
-        {
-            return null;
-        }
+            return (null, "UserNotFound");
 
         _mapper.Map(dto, user);
 
-        var updatedUser = await _userRepository
-            .UpdateAsync(user);
+        var updatedUser = await _userRepository.UpdateAsync(user);
 
-        return _mapper.Map<UserResponseDto>(updatedUser);
+        if (updatedUser is null)
+            return (null, "GroupNotFound");
+
+        return (_mapper.Map<UserResponseDto>(updatedUser), null);
     }
 
     public async Task<bool> DeleteAsync(int id)
@@ -106,5 +119,11 @@ public class UserService : IUserService
         return _mapper.Map<List<StudentTaskResponseDto>>(
             studentTasks
         );
+    }
+    public async Task<List<AttendanceResponseDto>> GetStudentAttendanceByStudentId (int studentId)
+    {
+        var  attendance = await _userRepository.GetStudentAttendanceAsync(studentId);
+        
+        return _mapper.Map<List<AttendanceResponseDto>>(attendance);
     }
 }
