@@ -2,6 +2,7 @@ using BackEndCodeTrix.Mapping;
 using BackEndCodeTrix.Src.Data;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Lesson;
+using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.Tasks.Students;
 using BackEndCodeTrix.Src.Users;
@@ -48,6 +49,9 @@ public static class DependencyInjection
         // Lessons
         services.AddScoped<ILessonRepository, LessonRepository>();
         services.AddScoped<ILessonService, LessonService>();
+
+         services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+        services.AddScoped<IAttendanceService, AttendanceService>();
 
         return services;
     }

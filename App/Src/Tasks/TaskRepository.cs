@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
 using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Group;
+using BackEndCodeTrix.Src.Users;
 
 namespace BackEndCodeTrix.Src.Tasks;
 
@@ -84,6 +85,14 @@ public class TaskRepository : ITaskRepository
 
         return true;
     }
+
+  public async Task<List<UserModel>> GetStudentsByTaskIdAsync(int taskId)
+{
+    return await _context.Tasks
+        .Where(t => t.TaskId == taskId)
+        .SelectMany(t => t.Group.Students)
+        .ToListAsync();
+}
 
     public async Task<GroupModel?> GetGroupByTaksIdAsync(int taskId)
     {

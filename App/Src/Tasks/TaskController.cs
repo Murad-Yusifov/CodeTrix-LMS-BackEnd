@@ -102,6 +102,17 @@ public class TaskController : ControllerBase
         return NoContent();
     }
 
+     [HttpGet("{taskId}/students")]
+    public async Task<IActionResult> GetTaskStudent (int taskId)
+    {
+        var group = await _taskService.GetStudentsByTaskIdAsync(taskId);
+        if (group is null)
+            return NotFound("Student is not found");
+
+        return Ok(group);
+
+    }
+
     [HttpGet("{taskId}/group")]
     public async Task<IActionResult> GetTaskGroup(int taskId)
     {

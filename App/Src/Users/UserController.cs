@@ -115,6 +115,8 @@ public class UserController : ControllerBase
         if (attendance is null)
             return NotFound("The Student Attendance Records are empty");
 
+            
+
         return Ok(attendance);
     }
 

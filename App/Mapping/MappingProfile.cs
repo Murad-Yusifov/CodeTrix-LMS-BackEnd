@@ -1,8 +1,11 @@
 using AutoMapper;
+using BackEndCodeTrix.Src.Attendance;
+using BackEndCodeTrix.Src.Attendance.AttendanceDTO;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Lesson.LessonDTO;
 using BackEndCodeTrix.Src.LessonSchedule;
+using BackEndCodeTrix.Src.LessonSchedule.AttendanceDTO;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Tasks.TaskDTO;
@@ -80,6 +83,7 @@ public class MappingProfile : Profile
             dest => dest.GroupId,
             opt => opt.MapFrom(src => src.GroupId)
         );
+        
         CreateMap<CreateTaskDto, TaskModel>();
         CreateMap<UpdateTaskDto, TaskModel>();
 
@@ -122,7 +126,7 @@ public class MappingProfile : Profile
                .ForMember(
                    dest => dest.LessonName,
                    opt => opt.MapFrom(
-                       src => src.LessonName
+                       src => src.Lesson
                    )
                )
                   .ForMember(
@@ -134,5 +138,25 @@ public class MappingProfile : Profile
            opt => opt.MapFrom(src => src.Student.UserSurName)
        );
 
+        CreateMap<CreateAttendanceDto, AttendanceModel>();
+
+        CreateMap<UpdateAttendanceDto, AttendanceModel>();
+
+        CreateMap<AttendanceModel, AttendanceResponseDto>()
+            .ForMember(
+                dest => dest.StudentName,
+                opt => opt.MapFrom(src =>
+                    src.Student.UserName))
+            .ForMember(
+                dest => dest.StudentSurname,
+                opt => opt.MapFrom(src =>
+                    src.Student.UserSurName))
+            .ForMember(
+                dest => dest.LessonName,
+                opt => opt.MapFrom(src =>
+                    src.Lesson.LessonName));
+
     }
+
+
 }

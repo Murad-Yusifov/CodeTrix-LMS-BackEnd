@@ -27,7 +27,7 @@ public class StudentTaskController : ControllerBase
         return Ok(studentTasks);
     }
 
-    [HttpGet("student/{studentId}")]
+    [HttpGet("{studentId}/tasks")]
     public async Task<IActionResult> GetStudentTasks(
         int studentId
     )

@@ -4,7 +4,7 @@ using BackEndCodeTrix.Src.Users;
 
 namespace BackEndCodeTrix.Src.Group;
 
-public class GroupModel
+public class   GroupModel
 {
     public int GroupId { get; set; }
 

@@ -1,8 +1,7 @@
 
 
+using BackEndCodeTrix.Src.Attendance.AttendanceDTO;
 using BackEndCodeTrix.Src.Group.GroupDTO;
-using BackEndCodeTrix.Src.Lesson;
-using BackEndCodeTrix.Src.Lesson.LessonDTO;
 using BackEndCodeTrix.Src.Tasks.StudentTaskDTO;
 using BackEndCodeTrix.Src.Users.UserDTO;
 

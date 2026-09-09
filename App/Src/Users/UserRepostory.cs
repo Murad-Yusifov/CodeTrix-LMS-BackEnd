@@ -126,7 +126,7 @@ public class UserRepository : IUserRepository
         .AsNoTracking()
         .Where(a => a.StudentId == userId)
         .Include(a => a.Student)
-        .Include(a => a.LessonName)
+        .Include(a => a.Lesson)
         .ToListAsync();
 
 

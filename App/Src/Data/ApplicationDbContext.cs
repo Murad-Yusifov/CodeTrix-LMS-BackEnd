@@ -3,6 +3,7 @@ using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Users;
+using BackEndCodeTrix.Src.Attendance;
 
 namespace BackEndCodeTrix.Src.Data;
 
@@ -82,7 +83,7 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<AttendanceModel>()
-            .HasOne(a => a.LessonName)
+            .HasOne(a => a.Lesson)
             .WithMany()
             .HasForeignKey(a => a.LessonId)
             .OnDelete(DeleteBehavior.Cascade);

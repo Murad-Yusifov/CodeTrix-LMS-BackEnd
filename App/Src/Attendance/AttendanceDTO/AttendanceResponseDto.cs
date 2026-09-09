@@ -1,4 +1,4 @@
-namespace BackEndCodeTrix.Src.Lesson.LessonDTO;
+namespace BackEndCodeTrix.Src.Attendance.AttendanceDTO;
 
 public class AttendanceResponseDto
 {

@@ -1,8 +1,8 @@
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Tasks;
-using BackEndCodeTrix.Src.Lesson;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Users;
+using BackEndCodeTrix.Src.Attendance;
 
 namespace BackEndCodeTrix.Src.Data;
 
@@ -144,7 +144,7 @@ public static class SeedData
         }
 
         context.SaveChanges();
-        
+
 
         // =====================================================
         // 3. GROUPS
@@ -303,6 +303,9 @@ public static class SeedData
                 {
                     LessonId = 1,
                     GroupId = 1,
+
+                     LessonName ="JS Essentialls",
+
                     LessonStarts = DateTime.UtcNow
                         .AddDays(1)
                         .Date
@@ -319,6 +322,8 @@ public static class SeedData
                 {
                     LessonId = 2,
                     GroupId = 1,
+                  LessonName ="React Essentialls",
+
                     LessonStarts = DateTime.UtcNow
                         .AddDays(3)
                         .Date

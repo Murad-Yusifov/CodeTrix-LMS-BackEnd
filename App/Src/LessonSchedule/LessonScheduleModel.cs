@@ -7,7 +7,7 @@ public class LessonModel
     public int LessonId { get; set; }
 
     public int GroupId { get; set; }
-
+    public string LessonName { get; set; } = string.Empty;
     public GroupModel Group { get; set; } = null!;
 
     public DateTime LessonStarts { get; set; }
@@ -20,5 +20,5 @@ public class LessonModel
     // OR classroom number
     public string? Classroom { get; set; } = string.Empty;
 
-    
+
 }
