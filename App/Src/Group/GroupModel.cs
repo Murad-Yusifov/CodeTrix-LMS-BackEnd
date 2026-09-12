@@ -1,3 +1,4 @@
+using BackEndCodeTrix.Src.Course;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.Users;
@@ -11,9 +12,9 @@ public class   GroupModel
     public string GroupName { get; set; } = string.Empty;
 
 
-    // public CourseModel CourseId {get; set;} 
+    public int CourseId {get; set;} 
 
-    // public CourseModel Course {get; set;}  =null!;
+    public CourseModel Course {get; set;}  =null!;
 
     public DateTime DateOfCreated { get; set; }
 

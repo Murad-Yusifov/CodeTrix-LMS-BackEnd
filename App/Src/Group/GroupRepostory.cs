@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BackEndCodeTrix.Src.Data;
 using BackEndCodeTrix.Src.Users;
+using BackEndCodeTrix.Src.Group.GroupDTO;
 namespace BackEndCodeTrix.Src.Group;
 
 public class GroupRepository : IGroupRepository
@@ -18,6 +19,7 @@ public class GroupRepository : IGroupRepository
     {
         return await _context.Groups
             .Include(group => group.CreatedByMentor)
+            .Include(g => g.Course)
             .Include(group => group.Students)
             .Include(group => group.Tasks)
             .Include(group => group.Lessons)
@@ -31,21 +33,26 @@ public class GroupRepository : IGroupRepository
             .Include(group => group.Students)
             .Include(group => group.Tasks)
             .Include(group => group.Lessons)
+            .Include(group => group.Course)
             .FirstOrDefaultAsync(
                 group => group.GroupId == id
             );
     }
 
-    public async Task<GroupModel> CreateAsync(
-        GroupModel group
-    )
-    {
-        _context.Groups.Add(group);
+  public async Task<GroupModel> CreateAsync(GroupModel group)
+{
+    _context.Groups.Add(group);
 
-        await _context.SaveChangesAsync();
+    await _context.SaveChangesAsync();
 
-        return group;
-    }
+    return await _context.Groups
+        .Include(g => g.Course)
+        .Include(g => g.CreatedByMentor)
+        .Include(g => g.Students)
+        .Include(g => g.Tasks)
+        .Include(g => g.Lessons)
+        .FirstAsync(g => g.GroupId == group.GroupId);
+}
 
     public async Task<GroupModel> UpdateAsync(
         GroupModel group

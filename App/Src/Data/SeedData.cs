@@ -2,13 +2,15 @@ using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Users;
-using BackEndCodeTrix.Src.Attendance;
+using BackEndCodeTrix.Src.Course;
+using BackEndCodeTrix.Src.CourseRequest;
+using BackEndCodeTrix.Src.Auth;
 
 namespace BackEndCodeTrix.Src.Data;
 
 public static class SeedData
 {
-    public static void Seed(ApplicationDbContext context)
+    public static void Seed(ApplicationDbContext context, PasswordHasher hasher)
     {
         // =====================================================
         // 1. ROLES
@@ -55,7 +57,7 @@ public static class SeedData
                 UserSurName = "CodeTrix",
                 Email = "admin@codetrix.com",
                 PhoneNumber = "+994501111111",
-                PasswordHash = "Admin123!",
+                PasswordHash = hasher.Hash("Admin123!"),
                 RoleId = 3,
                 GroupId = null
             };
@@ -75,7 +77,7 @@ public static class SeedData
                 UserSurName = "Mentor",
                 Email = "mentor@codetrix.com",
                 PhoneNumber = "+994502222222",
-                PasswordHash = "Mentor123!",
+                PasswordHash = hasher.Hash("Mentor123!"),
                 RoleId = 2,
                 GroupId = null
             };
@@ -95,7 +97,7 @@ public static class SeedData
                 UserSurName = "Yusifov",
                 Email = "murad@codetrix.com",
                 PhoneNumber = "+994503333333",
-                PasswordHash = "Student123!",
+                PasswordHash = hasher.Hash("Student123!"),
                 RoleId = 1,
                 GroupId = null
             };
@@ -115,7 +117,7 @@ public static class SeedData
                 UserSurName = "Mammadov",
                 Email = "ali@codetrix.com",
                 PhoneNumber = "+994504444444",
-                PasswordHash = "Student123!",
+                PasswordHash = hasher.Hash("Student123!"),
                 RoleId = 1,
                 GroupId = null
             };
@@ -135,7 +137,7 @@ public static class SeedData
                 UserSurName = "Hasanova",
                 Email = "leyla@codetrix.com",
                 PhoneNumber = "+994505555555",
-                PasswordHash = "Student123!",
+                PasswordHash = hasher.Hash("Student123!"),
                 RoleId = 1,
                 GroupId = null
             };
@@ -145,9 +147,122 @@ public static class SeedData
 
         context.SaveChanges();
 
+        // =====================================================
+        // 3. COURSES
+        // =====================================================
+
+        if (!context.Courses.Any())
+        {
+            var courses = new List<CourseModel>
+            {
+                new CourseModel
+                {
+                    CourseId = 1,
+                    Title = "Frontend Development",
+                    Slug = "frontend-development",
+                    Description =
+                        "Learn HTML, CSS, JavaScript, React and modern frontend development.",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+
+                new CourseModel
+                {
+                    CourseId = 2,
+                    Title = "Backend Development with C#",
+                    Slug = "backend-development-csharp",
+                    Description =
+                        "Learn C#, ASP.NET Core Web API, Entity Framework Core and databases.",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+
+                new CourseModel
+                {
+                    CourseId = 3,
+                    Title = "React Development",
+                    Slug = "react-development",
+                    Description =
+                        "Learn React, routing, state management and building modern web applications.",
+                    IsActive = false,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                }
+            };
+
+            context.Courses.AddRange(courses);
+            context.SaveChanges();
+        }
+
+                    // =====================================================
+            // 4.1. COURSE REQUESTS
+            // =====================================================
+
+            if (!context.CourseRequests.Any())
+            {
+                var courseRequests = new List<CourseRequestModel>
+                {
+                    new CourseRequestModel
+                    {
+                        CourseRequestId = 1,
+                        CourseId = 1,
+                        Name = "Ahmed Aliyev",
+                        Email = "ahmed@example.com",
+                        Phone = "+994501234567",
+                        Message = "I want to join the Frontend Development course.",
+                        Status = CourseRequestStatus.Pending,
+                        CreatedAt = DateTime.UtcNow.AddDays(-3),
+                        UpdatedAt = null
+                    },
+
+                    new CourseRequestModel
+                    {
+                        CourseRequestId = 2,
+                        CourseId = 2,
+                        Name = "Nigar Hasanli",
+                        Email = "nigar@example.com",
+                        Phone = "+994502345678",
+                        Message = "I am interested in learning ASP.NET Core and C#.",
+                        Status = CourseRequestStatus.Contacted,
+                        CreatedAt = DateTime.UtcNow.AddDays(-5),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-2)
+                    },
+
+                    new CourseRequestModel
+                    {
+                        CourseRequestId = 3,
+                        CourseId = 3,
+                        Name = "Elvin Mammadov",
+                        Email = "elvin@example.com",
+                        Phone = "+994503456789",
+                        Message = "I would like to join the React course.",
+                        Status = CourseRequestStatus.Approved,
+                        CreatedAt = DateTime.UtcNow.AddDays(-7),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-1)
+                    },
+
+                    new CourseRequestModel
+                    {
+                        CourseRequestId = 4,
+                        CourseId = 2,
+                        Name = "Aysel Karimova",
+                        Email = "aysel@example.com",
+                        Phone = "+994504567890",
+                        Message = "Please contact me about the Backend Development course.",
+                        Status = CourseRequestStatus.Rejected,
+                        CreatedAt = DateTime.UtcNow.AddDays(-10),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-6)
+                    }
+                };
+
+                context.CourseRequests.AddRange(courseRequests);
+                context.SaveChanges();
+            }
 
         // =====================================================
-        // 3. GROUPS
+        // 4. GROUPS
         // =====================================================
 
         var group = context.Groups
@@ -160,7 +275,8 @@ public static class SeedData
                 GroupId = 1,
                 GroupName = "Frontend Group",
                 DateOfCreated = DateTime.UtcNow,
-                CreatedByMentorId = mentor.UserId
+                CreatedByMentorId = mentor.UserId,
+                CourseId = 1
             };
 
             context.Groups.Add(group);
@@ -168,7 +284,7 @@ public static class SeedData
         }
 
         // =====================================================
-        // 4. ASSIGN STUDENTS TO GROUP
+        // 5. ASSIGN STUDENTS TO GROUP
         // =====================================================
 
         var students = context.Users
@@ -186,7 +302,7 @@ public static class SeedData
         context.SaveChanges();
 
         // =====================================================
-        // 5. TASKS
+        // 6. TASKS
         // =====================================================
 
         if (!context.Tasks.Any())
@@ -223,7 +339,7 @@ public static class SeedData
         }
 
         // =====================================================
-        // 6. STUDENT TASKS
+        // 7. STUDENT TASKS
         // =====================================================
 
         if (!context.StudentTasks.Any())
@@ -292,7 +408,7 @@ public static class SeedData
         }
 
         // =====================================================
-        // 7. LESSONS
+        // 8. LESSONS
         // =====================================================
 
         if (!context.Lessons.Any())
@@ -303,17 +419,18 @@ public static class SeedData
                 {
                     LessonId = 1,
                     GroupId = 1,
-
-                     LessonName ="JS Essentialls",
+                    LessonName = "JS Essentials",
 
                     LessonStarts = DateTime.UtcNow
                         .AddDays(1)
                         .Date
                         .AddHours(18),
+
                     LessonEnds = DateTime.UtcNow
                         .AddDays(1)
                         .Date
                         .AddHours(20),
+
                     LocationType = LocationType.Online,
                     Classroom = "https://zoom.us/j/123456789"
                 },
@@ -322,16 +439,18 @@ public static class SeedData
                 {
                     LessonId = 2,
                     GroupId = 1,
-                  LessonName ="React Essentialls",
+                    LessonName = "React Essentials",
 
                     LessonStarts = DateTime.UtcNow
                         .AddDays(3)
                         .Date
                         .AddHours(18),
+
                     LessonEnds = DateTime.UtcNow
                         .AddDays(3)
                         .Date
                         .AddHours(20),
+
                     LocationType = LocationType.AtCourse,
                     Classroom = "Classroom 5"
                 }
@@ -342,7 +461,7 @@ public static class SeedData
         }
 
         // =====================================================
-        // 8. ATTENDANCE
+        // 9. ATTENDANCE
         // =====================================================
 
         if (!context.StudentAttendances.Any())

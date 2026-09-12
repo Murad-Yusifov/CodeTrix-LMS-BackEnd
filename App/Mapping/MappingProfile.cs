@@ -1,6 +1,10 @@
 using AutoMapper;
-using BackEndCodeTrix.Src.Attendance;
 using BackEndCodeTrix.Src.Attendance.AttendanceDTO;
+using BackEndCodeTrix.Src.Auth.AuthDTO;
+using BackEndCodeTrix.Src.Course;
+using BackEndCodeTrix.Src.Course.CourseDTO;
+using BackEndCodeTrix.Src.CourseRequest;
+using BackEndCodeTrix.Src.CourseRequest.CourseRequestDTO;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Group.GroupDTO;
 using BackEndCodeTrix.Src.Lesson.LessonDTO;
@@ -29,6 +33,18 @@ public class MappingProfile : Profile
 
         CreateMap<UpdateUserDto, UserModel>();
 
+        CreateMap<UserModel, CurrentUserDto>()
+            .ForMember(
+                dest => dest.Role,
+                opt => opt.MapFrom(src => src.Role.RoleName)
+            );
+
+            CreateMap<UserModel, AuthResponseDto>()
+                .ForMember(
+                    dest => dest.Role,
+                    opt => opt.MapFrom(src => src.Role.RoleName)
+                );
+
         CreateMap<GroupModel, GroupResponseDto>()
         .ForMember(destination => destination.CreatedByMentorName,
         options => options.MapFrom(
@@ -41,7 +57,11 @@ public class MappingProfile : Profile
                 destination => destination.StudentsCount,
                 options => options.MapFrom(
                     source => source.Students.Count
-                ));
+                ))
+                .ForMember(
+                dest => dest.CourseName,
+                opt => opt.MapFrom(src => src.Course.Title)
+            );
         CreateMap<CreateGroupDto, GroupModel>();
 
         CreateMap<CreateStudentTaskDto, StudentTaskModel>();
@@ -83,7 +103,7 @@ public class MappingProfile : Profile
             dest => dest.GroupId,
             opt => opt.MapFrom(src => src.GroupId)
         );
-        
+
         CreateMap<CreateTaskDto, TaskModel>();
         CreateMap<UpdateTaskDto, TaskModel>();
 
@@ -156,6 +176,23 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src =>
                     src.Lesson.LessonName));
 
+        CreateMap<CourseModel, CourseResponseDto>();
+
+        CreateMap<CreateCourseDto, CourseModel>();
+
+        CreateMap<UpdateCourseDto, CourseModel>();
+
+        // CourseRequest
+
+        CreateMap<CreateCourseRequestDto, CourseRequestModel>();
+
+        CreateMap<UpdateCourseRequestDto, CourseRequestModel>();
+
+        CreateMap<CourseRequestModel, CourseRequestResponseDto>()
+            .ForMember(
+                dest => dest.CourseName,
+                opt => opt.MapFrom(src => src.Course.Title)
+            );
     }
 
 

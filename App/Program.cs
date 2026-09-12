@@ -1,5 +1,6 @@
 // Program.cs
 using BackEndCodeTrix.Extensions;
+using BackEndCodeTrix.Src.Auth;
 using BackEndCodeTrix.Src.Data;
 
 
@@ -26,7 +27,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    SeedData.Seed(context);
+    var hasher = scope.ServiceProvider.GetRequiredService<PasswordHasher>();
+
+    SeedData.Seed(context, hasher);
 }
 
 if (app.Environment.IsDevelopment())
@@ -34,15 +37,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 
-     app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = string.Empty;
-    });
+    app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
+   {
+       options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+       options.RoutePrefix = string.Empty;
+   });
 }
 
 // Middleware Request Pipeline
 app.UseHttpsRedirection();
+
+app.UseAuthentication();   // MUST come before Authorization
+app.UseAuthorization();
 
 app.MapControllers();
 

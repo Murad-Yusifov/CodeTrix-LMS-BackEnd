@@ -3,6 +3,7 @@ using System;
 using BackEndCodeTrix.Src.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,41 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260910190124_AddCourse")]
+    partial class AddCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
-
-            modelBuilder.Entity("BackEndCodeTrix.Src.Auth.RefreshTokenModel", b =>
-                {
-                    b.Property<int>("RefreshTokenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("RefreshTokenId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens");
-                });
 
             modelBuilder.Entity("BackEndCodeTrix.Src.Course.CourseModel", b =>
                 {
@@ -78,53 +52,10 @@ namespace App.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("BackEndCodeTrix.Src.CourseRequest.CourseRequestModel", b =>
-                {
-                    b.Property<int>("CourseRequestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("CourseRequestId");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("CourseRequests");
-                });
-
             modelBuilder.Entity("BackEndCodeTrix.Src.Group.GroupModel", b =>
                 {
                     b.Property<int>("GroupId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CourseId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CreatedByMentorId")
@@ -138,8 +69,6 @@ namespace App.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("GroupId");
-
-                    b.HasIndex("CourseId");
 
                     b.HasIndex("CreatedByMentorId");
 
@@ -335,43 +264,13 @@ namespace App.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BackEndCodeTrix.Src.Auth.RefreshTokenModel", b =>
-                {
-                    b.HasOne("BackEndCodeTrix.Src.Users.UserModel", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BackEndCodeTrix.Src.CourseRequest.CourseRequestModel", b =>
-                {
-                    b.HasOne("BackEndCodeTrix.Src.Course.CourseModel", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("BackEndCodeTrix.Src.Group.GroupModel", b =>
                 {
-                    b.HasOne("BackEndCodeTrix.Src.Course.CourseModel", "Course")
-                        .WithMany("Groups")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("BackEndCodeTrix.Src.Users.UserModel", "CreatedByMentor")
                         .WithMany("CreatedGroups")
                         .HasForeignKey("CreatedByMentorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Course");
 
                     b.Navigation("CreatedByMentor");
                 });
@@ -455,11 +354,6 @@ namespace App.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("BackEndCodeTrix.Src.Course.CourseModel", b =>
-                {
-                    b.Navigation("Groups");
                 });
 
             modelBuilder.Entity("BackEndCodeTrix.Src.Group.GroupModel", b =>

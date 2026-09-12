@@ -3,7 +3,9 @@ using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Users;
-using BackEndCodeTrix.Src.Attendance;
+using BackEndCodeTrix.Src.Course;
+using BackEndCodeTrix.Src.CourseRequest;
+using BackEndCodeTrix.Src.Auth;
 
 namespace BackEndCodeTrix.Src.Data;
 
@@ -25,13 +27,22 @@ public class ApplicationDbContext : DbContext
     public DbSet<RoleModel> Roles { get; set; }
     public DbSet<StudentTaskModel> StudentTasks { get; set; }
     public DbSet<AttendanceModel> StudentAttendances { get; set; }
+    public DbSet<CourseModel> Courses { get; set; }
+    public DbSet<CourseRequestModel> CourseRequests { get; set; }
+    public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+
         modelBuilder.Entity<RoleModel>()
-       .Property(r => r.RoleId)
-       .ValueGeneratedNever();
+     .HasKey(r => r.RoleId);
+
+        modelBuilder.Entity<RoleModel>()
+            .Property(r => r.RoleId)
+            .ValueGeneratedNever();
 
         // 👇 Tell EF Core what your Primary Key is (change 'Id' to your property name)
         modelBuilder.Entity<GroupModel>()
@@ -58,8 +69,6 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<TaskModel>()
         .HasKey(l => l.TaskId);
 
-        modelBuilder.Entity<RoleModel>()
-        .HasKey(l => l.RoleId);
 
         modelBuilder.Entity<UserModel>()
         .HasKey(l => l.UserId);
@@ -70,6 +79,13 @@ public class ApplicationDbContext : DbContext
             .HasOne(g => g.CreatedByMentor)
             .WithMany(u => u.CreatedGroups)
             .HasForeignKey(g => g.CreatedByMentorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+        modelBuilder.Entity<GroupModel>()
+            .HasOne(g => g.Course)
+            .WithMany(c => c.Groups)
+            .HasForeignKey(g => g.CourseId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Attendance Existing Relationship code
@@ -87,5 +103,28 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(a => a.LessonId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CourseModel>()
+       .HasKey(x => x.CourseId);
+
+
+        modelBuilder.Entity<CourseRequestModel>()
+            .HasKey(x => x.CourseRequestId);
+
+        modelBuilder.Entity<CourseRequestModel>()
+            .HasOne(x => x.Course)
+            .WithMany()
+            .HasForeignKey(x => x.CourseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<RefreshTokenModel>()
+            .HasKey(x => x.RefreshTokenId);
+
+        modelBuilder.Entity<RefreshTokenModel>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

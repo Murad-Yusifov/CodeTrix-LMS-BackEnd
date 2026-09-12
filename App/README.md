@@ -487,3 +487,12 @@ Example Structure: https://github.com/kawser2133/clean-structured-project/tree/d
   "name": "John Smith",
   "role": "Mentor"
 }
+
+
+{
+     "userName": "MJ",
+  "userSurName": "Jane",
+  "email": "whateverStudent3@codetrix.com",
+  "phoneNumber": "+994 55 413 46 36",
+  "password": "123456789"
+}

@@ -1,4 +1,8 @@
+using System.Text;
 using BackEndCodeTrix.Mapping;
+using BackEndCodeTrix.Src.Auth;
+using BackEndCodeTrix.Src.Course;
+using BackEndCodeTrix.Src.CourseRequest;
 using BackEndCodeTrix.Src.Data;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.Lesson;
@@ -6,7 +10,9 @@ using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;
 using BackEndCodeTrix.Src.Tasks.Students;
 using BackEndCodeTrix.Src.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BackEndCodeTrix.Extensions;
 
@@ -16,18 +22,20 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // 1. Database Configuration (SQLite)
+        // Database
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(
                 configuration.GetConnectionString("DefaultConnection")));
 
-        // 2. AutoMapper Setup
+        // AutoMapper
         services.AddAutoMapper(cfg =>
         {
             cfg.AddProfile<MappingProfile>();
         });
 
-        // 3. Application Services & Repositories
+        // =========================
+        // Repositories & Services
+        // =========================
 
         // Users
         services.AddScoped<IUserRepository, UserRepository>();
@@ -43,15 +51,64 @@ public static class DependencyInjection
 
         // Student Tasks
         services.AddScoped<IStudentTaskRepository, StudentTaskRepository>();
-
         services.AddScoped<IStudentTaskService, StudentTaskService>();
 
         // Lessons
         services.AddScoped<ILessonRepository, LessonRepository>();
         services.AddScoped<ILessonService, LessonService>();
 
-         services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+        // Attendance
+        services.AddScoped<IAttendanceRepository, AttendanceRepository>();
         services.AddScoped<IAttendanceService, AttendanceService>();
+
+        // Courses
+        services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<ICourseService, CourseService>();
+
+        // Course Requests
+        services.AddScoped<ICourseRequestRepository, CourseRequestRepository>();
+        services.AddScoped<ICourseRequestService, CourseRequestService>();
+
+        services.AddScoped<PasswordHasher>();
+
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        // =========================
+        // Authentication
+        // =========================
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            configuration["Jwt:Key"]
+                            ?? throw new InvalidOperationException(
+                                "JWT Key tapılmadı.")
+                        )
+                    )
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine("JWT ERROR: " + context.Exception.Message);
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+        // Authorization
+        services.AddAuthorization();
 
         return services;
     }

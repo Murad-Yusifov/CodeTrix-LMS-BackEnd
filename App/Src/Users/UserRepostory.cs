@@ -17,10 +17,14 @@ public class UserRepository : IUserRepository
 
     public async Task<List<UserModel>> GetAllAsync()
     {
+        var user = await _context.Users
+        .FirstOrDefaultAsync(u => u.Email == "whateverStudent3@codetrix.com");
+
+        Console.WriteLine($"Email: {user?.Email}");
+        Console.WriteLine($"PasswordHash: {user?.PasswordHash}");
         return await _context.Users
             .Include(user => user.Role)
             .Include(user => user.Group)
-            .Include(type => type.Group)
             // .Include(attendance =>attendance.Attendance)
             .ToListAsync();
     }
@@ -122,12 +126,12 @@ public class UserRepository : IUserRepository
 
     public async Task<List<AttendanceModel>> GetStudentAttendanceAsync(int userId)
     {
-    return await _context.StudentAttendances
-        .AsNoTracking()
-        .Where(a => a.StudentId == userId)
-        .Include(a => a.Student)
-        .Include(a => a.Lesson)
-        .ToListAsync();
+        return await _context.StudentAttendances
+            .AsNoTracking()
+            .Where(a => a.StudentId == userId)
+            .Include(a => a.Student)
+            .Include(a => a.Lesson)
+            .ToListAsync();
 
 
     }

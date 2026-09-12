@@ -6,6 +6,10 @@ public class GroupResponseDto
 
     public string GroupName { get; set; } = string.Empty;
 
+      public int CourseId { get; set; }
+
+    public string? CourseName { get; set; }
+
     public DateTime DateOfCreated { get; set; }
 
     public int CreatedByMentorId { get; set; }
