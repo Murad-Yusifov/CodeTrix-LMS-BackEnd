@@ -74,6 +74,17 @@ public static class DependencyInjection
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IAuthService, AuthService>();
 
+        services.AddCors(options =>
+            {
+                options.AddPolicy("AdminPanel", policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
         // =========================
         // Authentication
         // =========================

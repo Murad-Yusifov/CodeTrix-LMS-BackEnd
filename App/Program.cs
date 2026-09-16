@@ -47,6 +47,8 @@ if (app.Environment.IsDevelopment())
 // Middleware Request Pipeline
 app.UseHttpsRedirection();
 
+app.UseCors("AdminPanel");
+
 app.UseAuthentication();   // MUST come before Authorization
 app.UseAuthorization();
 

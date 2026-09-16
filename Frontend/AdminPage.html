@@ -1,0 +1,3758 @@
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CodeTrix LMS Admin</title>
+
+        <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 240px;
+            background: #111827;
+            color: white;
+            padding: 20px 14px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 10px 12px 25px;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav button {
+            border: 0;
+            background: transparent;
+            color: #cbd5e1;
+            text-align: left;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .nav button:hover,
+        .nav button.active {
+            background: #1e40af;
+            color: white;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+        }
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .topbar h1 {
+            font-size: 22px;
+        }
+
+        .backend-status {
+            font-size: 13px;
+        }
+
+        .online {
+            color: #16a34a;
+        }
+
+        .offline {
+            color: #dc2626;
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* DASHBOARD */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        /* TABLE */
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+            background: white;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 15px;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .table-wrapper {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f9fafb;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #e5e7eb;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        /* MODAL */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 500px;
+            max-width: 95%;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            border: 0;
+            background: transparent;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+            width: 190px;
+            }
+
+            .main {
+            margin-left: 190px;
+            width: calc(100% - 190px);
+            }
+
+            .cards {
+            grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+            display: none;
+            }
+
+            .main {
+            margin-left: 0;
+            width: 100%;
+            }
+
+            .cards {
+            grid-template-columns: 1fr;
+            }
+        }
+        </style>
+    </head>
+
+    <body>
+        <div class="app">
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+            <div class="logo">Code<span>Trix</span></div>
+
+            <div class="nav">
+            <button class="active" onclick="showPage('dashboard', this)">
+                Dashboard
+            </button>
+
+            <button onclick="showPage('students', this)">Students</button>
+
+            <button onclick="showPage('mentors', this)">Mentors</button>
+
+            <button onclick="showPage('groups', this)">Groups</button>
+
+            <button onclick="showPage('courses', this)">Courses</button>
+
+            <button onclick="showPage('lessons', this)">Lessons</button>
+
+            <button onclick="showPage('tasks', this)">Tasks</button>
+
+            <button onclick="showPage('attendance', this)">Attendance</button>
+
+            <button onclick="showPage('studentTasks', this)">
+                Student Tasks
+            </button>
+
+            <button onclick="showPage('requests', this)">Course Requests</button>
+
+            <button onclick="showPage('users', this)">All Users</button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+
+        <main class="main">
+            <header class="topbar">
+            <h1 id="pageTitle">Dashboard</h1>
+
+            <div id="backendStatus" class="backend-status">
+                ● Checking backend...
+            </div>
+            </header>
+
+            <div class="content">
+            <!-- DASHBOARD -->
+
+            <section id="dashboard" class="page active">
+                <div class="cards">
+                <div class="card">
+                    <div class="card-title">Students</div>
+                    <div class="card-value" id="studentCount">-</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Mentors</div>
+                    <div class="card-value" id="mentorCount">-</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Groups</div>
+                    <div class="card-value" id="groupCount">-</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Courses</div>
+                    <div class="card-value" id="courseCount">-</div>
+                </div>
+                </div>
+
+                <div class="cards">
+                <div class="card">
+                    <div class="card-title">Lessons</div>
+                    <div class="card-value" id="lessonCount">-</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Tasks</div>
+                    <div class="card-value" id="taskCount">-</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Attendance Records</div>
+                    <div class="card-value" id="attendanceCount">-</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Course Requests</div>
+                    <div class="card-value" id="requestCount">-</div>
+                </div>
+                </div>
+            </section>
+
+            <!-- STUDENTS -->
+
+            <section id="students" class="page">
+                <div class="section-header">
+                <h2>Students</h2>
+
+                <div class="actions">
+                    <input
+                    class="search"
+                    id="studentSearch"
+                    placeholder="Search students..."
+                    oninput="renderStudents()"
+                    />
+
+                    <button class="btn btn-primary" onclick="openUserModal(1)">
+                    + Student
+                    </button>
+                </div>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Group</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="studentsTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- MENTORS -->
+
+            <section id="mentors" class="page">
+                <div class="section-header">
+                <h2>Mentors</h2>
+
+                <button class="btn btn-primary" onclick="openUserModal(2)">
+                    + Mentor
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="mentorsTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- GROUPS -->
+
+            <section id="groups" class="page">
+                <div class="section-header">
+                <h2>Groups</h2>
+
+                <button class="btn btn-primary" onclick="openGroupModal()">
+                    + Group
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Group</th>
+                        <th>Course</th>
+                        <th>Mentor</th>
+                        <th>Students</th>
+                        <th>Tasks</th>
+                        <th>Lessons</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="groupsTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- COURSES -->
+
+            <section id="courses" class="page">
+                <div class="section-header">
+                <h2>Courses</h2>
+
+                <button class="btn btn-primary" onclick="openCourseModal()">
+                    + Course
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Slug</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="coursesTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- LESSONS -->
+
+            <section id="lessons" class="page">
+                <div class="section-header">
+                <h2>Lessons</h2>
+
+                <button class="btn btn-primary" onclick="openLessonModal()">
+                    + Lesson
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Group</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Type</th>
+                        <th>Classroom</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="lessonsTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- TASKS -->
+
+            <section id="tasks" class="page">
+                <div class="section-header">
+                <h2>Tasks</h2>
+
+                <button class="btn btn-primary" onclick="openTaskModal()">
+                    + Task
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Group</th>
+                        <th>Deadline</th>
+                        <th>Status</th>
+                        <th>Comment</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="tasksTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- ATTENDANCE -->
+
+            <section id="attendance" class="page">
+                <div class="section-header">
+                <h2>Attendance</h2>
+
+                <button class="btn btn-primary" onclick="openAttendanceModal()">
+                    + Attendance
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Lesson</th>
+                        <th>Status</th>
+                        <th>Recorded</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="attendanceTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- STUDENT TASKS -->
+
+            <section id="studentTasks" class="page">
+                <div class="section-header">
+                <h2>Student Tasks</h2>
+
+                <button class="btn btn-primary" onclick="openStudentTaskModal()">
+                    + Student Task
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Task</th>
+                        <th>Status</th>
+                        <th>Comment</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="studentTasksTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- REQUESTS -->
+
+            <section id="requests" class="page">
+                <div class="section-header">
+                <h2>Course Requests</h2>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="requestsTable"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- ALL USERS -->
+
+            <section id="users" class="page">
+                <div class="section-header">
+                <h2>All Users</h2>
+
+                <button class="btn btn-primary" onclick="openUserModal(1)">
+                    + User
+                </button>
+                </div>
+
+                <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Group</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="usersTable"></tbody>
+                </table>
+                </div>
+            </section>
+            </div>
+        </main>
+        </div>
+
+        <!-- MODAL -->
+
+        <div class="modal" id="modal" onclick="closeModalOutside(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+            <h2 id="modalTitle">Create</h2>
+
+            <button class="close" onclick="closeModal()">×</button>
+            </div>
+
+            <form id="modalForm" onsubmit="submitModal(event)"></form>
+
+            <div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    onclick="closeModal()"
+  >
+    Cancel
+  </button>
+
+  <button
+    type="submit"
+    form="modalForm"
+    class="btn btn-primary"
+  >
+    Save
+  </button>
+</div>
+        </div>
+        </div>
+
+        <script>
+        const API_BASE_URL = "http://localhost:5293/api";
+
+        const API = {
+            users: `${API_BASE_URL}/User`,
+            groups: `${API_BASE_URL}/Group`,
+            courses: `${API_BASE_URL}/courses`,
+            lessons: `${API_BASE_URL}/Lesson`,
+            tasks: `${API_BASE_URL}/Task`,
+            studentTasks: `${API_BASE_URL}/StudentTask`,
+            attendance: `${API_BASE_URL}/attendance`,
+            courseRequests: `${API_BASE_URL}/course-requests`,
+        };
+
+        let users = [];
+        let students = [];
+        let mentors = [];
+        let groups = [];
+        let courses = [];
+        let lessons = [];
+        let tasks = [];
+        let studentTasks = [];
+        let attendance = [];
+        let courseRequests = [];
+
+        let modalType = null;
+        let currentEditingId = null;
+        let currentGroupId = null;
+
+        /* =========================================================
+        API
+    ========================================================= */
+
+        async function apiGet(url) {
+            const response = await fetch(url);
+
+            console.log("GET:", url, "STATUS:", response.status);
+
+            if (!response.ok) {
+            const errorText = await response.text();
+
+            throw new Error(
+                `${response.status} ${response.statusText}: ${errorText}`,
+            );
+            }
+
+            const data = await response.json();
+
+            console.log("DATA:", url, data);
+
+            return Array.isArray(data) ? data : [];
+        }
+
+        async function apiRequest(url, options = {}) {
+            const response = await fetch(url, {
+            ...options,
+
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                ...(options.headers || {}),
+            },
+            });
+
+            const text = await response.text();
+
+            if (!response.ok) {
+            throw new Error(`${response.status} ${response.statusText}: ${text}`);
+            }
+
+            if (!text) {
+            return null;
+            }
+
+            try {
+            return JSON.parse(text);
+            } catch {
+            return text;
+            }
+        }
+
+        /* =========================================================
+        LOAD DATA
+    ========================================================= */
+
+        async function loadAllData() {
+            setBackendStatus("● Loading...", "");
+
+            const results = await Promise.allSettled([
+            apiGet(API.users),
+            apiGet(API.groups),
+            apiGet(API.courses),
+            apiGet(API.lessons),
+            apiGet(API.tasks),
+            apiGet(API.studentTasks),
+            apiGet(API.attendance),
+            apiGet(API.courseRequests),
+            ]);
+
+            users = getResult(results[0]);
+            groups = getResult(results[1]);
+            courses = getResult(results[2]);
+            lessons = getResult(results[3]);
+            tasks = getResult(results[4]);
+            studentTasks = getResult(results[5]);
+            attendance = getResult(results[6]);
+            courseRequests = getResult(results[7]);
+
+            students = users.filter((user) => Number(user.roleId) === 1);
+
+            mentors = users.filter((user) => Number(user.roleId) === 2);
+
+            const failed = results.filter((result) => result.status === "rejected");
+
+            if (failed.length === 0) {
+            setBackendStatus("● Backend connected", "online");
+            } else {
+            setBackendStatus(
+                `● ${failed.length} API request(s) failed`,
+                "offline",
+            );
+
+            console.error("Failed API requests:", failed);
+            }
+
+            renderEverything();
+        }
+
+        function getResult(result) {
+            if (result.status === "fulfilled") {
+            return Array.isArray(result.value) ? result.value : [];
+            }
+
+            console.error("API REQUEST FAILED:", result.reason);
+
+            return [];
+        }
+
+        /* =========================================================
+        RENDER EVERYTHING
+    ========================================================= */
+
+        function renderEverything() {
+            updateDashboard();
+
+            renderStudents();
+            renderMentors();
+            renderGroups();
+            renderCourses();
+            renderLessons();
+            renderTasks();
+            renderAttendance();
+            renderStudentTasks();
+            renderRequests();
+            renderUsers();
+        }
+
+        /* =========================================================
+        DASHBOARD
+    ========================================================= */
+
+        function updateDashboard() {
+            document.getElementById("studentCount").textContent = students.length;
+
+            document.getElementById("mentorCount").textContent = mentors.length;
+
+            document.getElementById("groupCount").textContent = groups.length;
+
+            document.getElementById("courseCount").textContent = courses.length;
+
+            document.getElementById("lessonCount").textContent = lessons.length;
+
+            document.getElementById("taskCount").textContent = tasks.length;
+
+            document.getElementById("attendanceCount").textContent =
+            attendance.length;
+
+            document.getElementById("requestCount").textContent =
+            courseRequests.length;
+        }
+
+        /* =========================================================
+        STUDENTS
+    ========================================================= */
+
+        function renderStudents() {
+            const tbody = document.getElementById("studentsTable");
+
+            const search =
+            document
+                .getElementById("studentSearch")
+                ?.value.toLowerCase()
+                .trim() || "";
+
+            const filtered = students.filter((user) => {
+            const text = `
+            ${user.userName || ""}
+            ${user.userSurName || ""}
+            ${user.email || ""}
+            ${user.phoneNumber || ""}
+        `.toLowerCase();
+
+            return text.includes(search);
+            });
+
+            if (!filtered.length) {
+            tbody.innerHTML = emptyRow(6);
+            return;
+            }
+
+            tbody.innerHTML = filtered
+            .map((user) => {
+                const group = groups.find(
+                (group) => Number(group.groupId) === Number(user.groupId),
+                );
+
+                return `
+            <tr>
+                <td>${user.userId ?? "-"}</td>
+
+                <td>
+                ${user.userName || ""}
+                ${user.userSurName || ""}
+                </td>
+
+                <td>${user.email || "-"}</td>
+
+                <td>${user.phoneNumber || "-"}</td>
+
+                <td>
+                ${group ? group.groupName : "No group"}
+                </td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditUserModal(${user.userId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="openStudentGroupModal(${user.userId})"
+                >
+                    Group
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteUser(${user.userId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `;
+            })
+            .join("");
+        }
+
+        /* =========================================================
+        MENTORS
+    ========================================================= */
+
+        function renderMentors() {
+            const tbody = document.getElementById("mentorsTable");
+
+            if (!mentors.length) {
+            tbody.innerHTML = emptyRow(5);
+            return;
+            }
+
+            tbody.innerHTML = mentors
+            .map(
+                (user) => `
+            <tr>
+                <td>${user.userId ?? "-"}</td>
+
+                <td>
+                ${user.userName || ""}
+                ${user.userSurName || ""}
+                </td>
+
+                <td>${user.email || "-"}</td>
+
+                <td>${user.phoneNumber || "-"}</td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditUserModal(${user.userId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteUser(${user.userId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `,
+            )
+            .join("");
+        }
+
+        /* =========================================================
+        GROUPS
+    ========================================================= */
+
+        function renderGroups() {
+            const tbody = document.getElementById("groupsTable");
+
+            if (!groups.length) {
+            tbody.innerHTML = emptyRow(8);
+            return;
+            }
+
+            tbody.innerHTML = groups
+            .map(
+                (group) => `
+            <tr>
+                <td>${group.groupId ?? "-"}</td>
+
+                <td>${group.groupName || "-"}</td>
+
+                <td>${group.courseName || "-"}</td>
+
+                <td>${group.createdByMentorName || "-"}</td>
+
+                <td>${group.studentsCount ?? 0}</td>
+
+                <td>${group.tasksCount ?? 0}</td>
+
+                <td>${group.lessonsCount ?? 0}</td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditGroupModal(${group.groupId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="openGroupStudentsModal(${group.groupId})"
+                >
+                    Students
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteGroup(${group.groupId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `,
+            )
+            .join("");
+        }
+
+        /* =========================================================
+        GROUP STUDENTS
+    ========================================================= */
+
+        async function openGroupStudentsModal(groupId) {
+            const group = groups.find(
+            (group) => Number(group.groupId) === Number(groupId),
+            );
+
+            if (!group) {
+            alert("Group not found.");
+            return;
+            }
+
+            try {
+            const groupStudents = await apiGet(
+                `${API.groups}/group/${groupId}/students`,
+            );
+
+            currentGroupId = groupId;
+            modalType = null;
+
+            document.getElementById("modalTitle").textContent =
+                `${group.groupName} - Students`;
+
+            document.getElementById("modalForm").innerHTML = `
+            <div style="margin-bottom:15px;">
+            <button
+                class="btn btn-primary"
+                onclick="openAddStudentsToGroupModal(${groupId})"
+            >
+                + Add Students
+            </button>
+            </div>
+
+            ${
+            groupStudents.length === 0
+                ? `
+                <p class="empty">
+                    No students in this group.
+                </p>
+                `
+                : `
+                <div class="table-wrapper">
+                    <table>
+                    <thead>
+                        <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${groupStudents
+                        .map(
+                            (student) => `
+                            <tr>
+                                <td>${student.userId}</td>
+
+                                <td>
+                                ${student.userName}
+                                ${student.userSurName}
+                                </td>
+
+                                <td>${student.email}</td>
+
+                                <td>
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="removeStudentFromGroup(${student.userId})"
+                                >
+                                    Remove
+                                </button>
+                                </td>
+                            </tr>
+                            `,
+                        )
+                        .join("")}
+                    </tbody>
+                    </table>
+                </div>
+                `
+            }
+        `;
+
+            openModal();
+            } catch (error) {
+            console.error(error);
+
+            alert("Could not load students:\n\n" + error.message);
+            }
+        }
+
+        /* =========================================================
+        ADD MULTIPLE STUDENTS TO GROUP
+    ========================================================= */
+
+        function openAddStudentsToGroupModal(groupId) {
+            const group = groups.find(
+            (group) => Number(group.groupId) === Number(groupId),
+            );
+
+            if (!group) {
+            alert("Group not found.");
+            return;
+            }
+
+            currentGroupId = groupId;
+            modalType = "addStudentsToGroup";
+
+            const availableStudents = students.filter(
+            (student) =>
+                !student.groupId || Number(student.groupId) !== Number(groupId),
+            );
+
+            document.getElementById("modalTitle").textContent =
+            `Add Students - ${group.groupName}`;
+
+            document.getElementById("modalForm").innerHTML =
+            availableStudents.length === 0
+                ? `
+            <p class="empty">
+                No available students.
+            </p>
+            `
+                : `
+            <div class="form-group">
+                <label>Select Students</label>
+
+                <div
+                style="
+                    max-height:300px;
+                    overflow-y:auto;
+                    border:1px solid #d1d5db;
+                    border-radius:7px;
+                    padding:10px;
+                "
+                >
+                ${availableStudents
+                    .map(
+                    (student) => `
+                        <label
+                        style="
+                            display:block;
+                            padding:8px;
+                            cursor:pointer;
+                        "
+                        >
+                        <input
+                            type="checkbox"
+                            class="group-student-checkbox"
+                            value="${student.userId}"
+                        >
+
+                        ${student.userName}
+                        ${student.userSurName}
+                        (${student.email})
+                        </label>
+                    `,
+                    )
+                    .join("")}
+                </div>
+            </div>
+            `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        ASSIGN ONE STUDENT
+    ========================================================= */
+
+        function openStudentGroupModal(studentId) {
+            const student = users.find(
+            (user) => Number(user.userId) === Number(studentId),
+            );
+
+            if (!student) {
+            alert("Student not found.");
+            return;
+            }
+
+            currentEditingId = studentId;
+            modalType = "studentGroup";
+
+            document.getElementById("modalTitle").textContent =
+            `Assign ${student.userName} ${student.userSurName} to Group`;
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Group</label>
+
+            <select id="studentGroupId">
+            <option value="">No Group</option>
+
+            ${groups
+                .map(
+                (group) => `
+                    <option
+                    value="${group.groupId}"
+                    ${
+                        Number(student.groupId) === Number(group.groupId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${group.groupName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        REMOVE STUDENT
+    ========================================================= */
+
+        async function removeStudentFromGroup(studentId) {
+            if (!confirm("Remove this student from the group?")) {
+            return;
+            }
+
+            const student = users.find(
+            (user) => Number(user.userId) === Number(studentId),
+            );
+
+            if (!student) {
+            return;
+            }
+
+            try {
+            await apiRequest(`${API.users}/${studentId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                userId: student.userId,
+                userName: student.userName,
+                userSurName: student.userSurName,
+                email: student.email,
+                phoneNumber: student.phoneNumber,
+                roleId: student.roleId,
+                groupId: null,
+                }),
+            });
+
+            await loadAllData();
+
+            if (currentGroupId) {
+                await openGroupStudentsModal(currentGroupId);
+            }
+            } catch (error) {
+            console.error(error);
+            alert(error.message);
+            }
+        }
+
+        /* =========================================================
+        EDIT USER
+    ========================================================= */
+
+        function openEditUserModal(userId) {
+            const user = users.find(
+            (user) => Number(user.userId) === Number(userId),
+            );
+
+            if (!user) {
+            alert("User not found.");
+            return;
+            }
+
+            currentEditingId = userId;
+            modalType = "editUser";
+
+            document.getElementById("modalTitle").textContent = "Edit User";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>First Name</label>
+
+            <input
+            id="editUserName"
+            value="${user.userName || ""}"
+            required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Last Name</label>
+
+            <input
+            id="editUserSurname"
+            value="${user.userSurName || ""}"
+            required
+            >
+        </div>
+
+            <div class="form-group">
+    <label>Role</label>
+
+    <select id="editUserRole">
+        <option
+        value="1"
+        ${Number(user.roleId) === 1 ? "selected" : ""}
+        >
+        Student
+        </option>
+
+        <option
+        value="2"
+        ${Number(user.roleId) === 2 ? "selected" : ""}
+        >
+        Mentor
+        </option>
+
+        <option
+        value="3"
+        ${Number(user.roleId) === 3 ? "selected" : ""}
+        >
+        Admin
+        </option>
+    </select>
+    </div>
+            : ""
+        }
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        EDIT GROUP
+    ========================================================= */
+
+        function openEditGroupModal(groupId) {
+            const group = groups.find(
+            (group) => Number(group.groupId) === Number(groupId),
+            );
+
+            if (!group) {
+            alert("Group not found.");
+            return;
+            }
+
+            currentEditingId = groupId;
+            modalType = "editGroup";
+
+            document.getElementById("modalTitle").textContent = "Edit Group";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Group Name</label>
+
+            <input
+            id="editGroupName"
+            value="${group.groupName || ""}"
+            required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Course</label>
+
+            <select id="editGroupCourse">
+            ${courses
+                .map(
+                (course) => `
+                    <option
+                    value="${course.courseId}"
+                    ${
+                        Number(group.courseId) === Number(course.courseId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${course.title}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Mentor</label>
+
+            <select id="editGroupMentor">
+            ${mentors
+                .map(
+                (mentor) => `
+                    <option
+                    value="${mentor.userId}"
+                    ${
+                        Number(group.createdByMentorId) === Number(mentor.userId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${mentor.userName}
+                    ${mentor.userSurName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        COURSES
+    ========================================================= */
+
+        function renderCourses() {
+            const tbody = document.getElementById("coursesTable");
+
+            if (!courses.length) {
+            tbody.innerHTML = emptyRow(6);
+            return;
+            }
+
+            tbody.innerHTML = courses
+            .map(
+                (course) => `
+            <tr>
+                <td>${course.courseId ?? "-"}</td>
+
+                <td>${course.title || "-"}</td>
+
+                <td>${course.slug || "-"}</td>
+
+                <td>
+                ${
+                    course.isActive
+                    ? `<span class="badge badge-green">Active</span>`
+                    : `<span class="badge badge-red">Inactive</span>`
+                }
+                </td>
+
+                <td>
+                ${formatDate(course.createdAt)}
+                </td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditCourseModal(${course.courseId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="toggleCourseStatus(
+                    ${course.courseId},
+                    ${course.isActive}
+                    )"
+                >
+                    ${course.isActive ? "Deactivate" : "Activate"}
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteCourse(${course.courseId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `,
+            )
+            .join("");
+        }
+
+        function openEditCourseModal(courseId) {
+            const course = courses.find(
+            (course) => Number(course.courseId) === Number(courseId),
+            );
+
+            if (!course) {
+            alert("Course not found.");
+            return;
+            }
+
+            currentEditingId = courseId;
+            modalType = "editCourse";
+
+            document.getElementById("modalTitle").textContent = "Edit Course";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Title</label>
+
+            <input
+            id="editCourseTitle"
+            value="${course.title || ""}"
+            required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Slug</label>
+
+            <input
+            id="editCourseSlug"
+            value="${course.slug || ""}"
+            required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea
+            id="editCourseDescription"
+            rows="5"
+            >${course.description || ""}</textarea>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        async function toggleCourseStatus(courseId, currentStatus) {
+            try {
+            await apiRequest(`${API.courses}/${courseId}/status`, {
+                method: "PATCH",
+
+                body: JSON.stringify({
+                isActive: !currentStatus,
+                }),
+            });
+
+            await loadAllData();
+            } catch (error) {
+            console.error(error);
+            alert(error.message);
+            }
+        }
+
+        /* =========================================================
+        LESSONS
+    ========================================================= */
+
+        function renderLessons() {
+            const tbody = document.getElementById("lessonsTable");
+
+            if (!lessons.length) {
+            tbody.innerHTML = emptyRow(7);
+            return;
+            }
+
+            tbody.innerHTML = lessons
+            .map((lesson) => {
+                const group = groups.find(
+                (group) => Number(group.groupId) === Number(lesson.groupId),
+                );
+
+                return `
+            <tr>
+                <td>${lesson.lessonId ?? "-"}</td>
+
+                <td>
+                ${group ? group.groupName : `Group ${lesson.groupId}`}
+                </td>
+
+                <td>
+                ${formatDate(lesson.lessonStarts)}
+                </td>
+
+                <td>
+                ${formatDate(lesson.lessonEnds)}
+                </td>
+
+                <td>${lesson.type || "-"}</td>
+
+                <td>${lesson.classRoom || "-"}</td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditLessonModal(${lesson.lessonId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteLesson(${lesson.lessonId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `;
+            })
+            .join("");
+        }
+
+        function openEditLessonModal(lessonId) {
+            const lesson = lessons.find(
+            (lesson) => Number(lesson.lessonId) === Number(lessonId),
+            );
+
+            if (!lesson) {
+            alert("Lesson not found.");
+            return;
+            }
+
+            currentEditingId = lessonId;
+            modalType = "editLesson";
+
+            document.getElementById("modalTitle").textContent = "Edit Lesson";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Group</label>
+
+            <select id="editLessonGroup">
+            ${groups
+                .map(
+                (group) => `
+                    <option
+                    value="${group.groupId}"
+                    ${
+                        Number(lesson.groupId) === Number(group.groupId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${group.groupName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Start</label>
+
+            <input
+            id="editLessonStart"
+            type="datetime-local"
+            value="${toDateTimeLocal(lesson.lessonStarts)}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>End</label>
+
+            <input
+            id="editLessonEnd"
+            type="datetime-local"
+            value="${toDateTimeLocal(lesson.lessonEnds)}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Type</label>
+
+            <select id="editLessonType">
+            <option
+                value="Online"
+                ${lesson.type === "Online" ? "selected" : ""}
+            >
+                Online
+            </option>
+
+            <option
+                value="AtCourse"
+                ${lesson.type === "AtCourse" ? "selected" : ""}
+            >
+                AtCourse
+            </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Classroom / URL</label>
+
+            <input
+            id="editLessonClassroom"
+            value="${lesson.classRoom || ""}"
+            >
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        TASKS
+    ========================================================= */
+
+        function renderTasks() {
+            const tbody = document.getElementById("tasksTable");
+
+            if (!tasks.length) {
+            tbody.innerHTML = emptyRow(7);
+            return;
+            }
+
+            tbody.innerHTML = tasks
+            .map((task) => {
+                const group = groups.find(
+                (group) => Number(group.groupId) === Number(task.groupId),
+                );
+
+                return `
+            <tr>
+                <td>${task.taskId ?? "-"}</td>
+
+                <td>${task.taskName || "-"}</td>
+
+                <td>
+                ${group ? group.groupName : (task.groupId ?? "-")}
+                </td>
+
+                <td>
+                ${formatDate(task.deadLine)}
+                </td>
+
+                <td>
+                <span class="badge">
+                    ${task.taskStatus || "-"}
+                </span>
+                </td>
+
+                <td>
+                ${task.mentorComment || "-"}
+                </td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditTaskModal(${task.taskId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteTask(${task.taskId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `;
+            })
+            .join("");
+        }
+
+        function openEditTaskModal(taskId) {
+            const task = tasks.find(
+            (task) => Number(task.taskId) === Number(taskId),
+            );
+
+            if (!task) {
+            alert("Task not found.");
+            return;
+            }
+
+            currentEditingId = taskId;
+            modalType = "editTask";
+
+            document.getElementById("modalTitle").textContent = "Edit Task";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Task Name</label>
+
+            <input
+            id="editTaskName"
+            value="${task.taskName || ""}"
+            required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Deadline</label>
+
+            <input
+            id="editTaskDeadline"
+            type="datetime-local"
+            value="${toDateTimeLocal(task.deadLine)}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Group</label>
+
+            <select id="editTaskGroup">
+            ${groups
+                .map(
+                (group) => `
+                    <option
+                    value="${group.groupId}"
+                    ${
+                        Number(task.groupId) === Number(group.groupId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${group.groupName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Mentor Comment</label>
+
+            <textarea
+            id="editTaskComment"
+            rows="4"
+            >${task.mentorComment || ""}</textarea>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        ATTENDANCE
+    ========================================================= */
+
+        function renderAttendance() {
+            const tbody = document.getElementById("attendanceTable");
+
+            if (!attendance.length) {
+            tbody.innerHTML = emptyRow(6);
+            return;
+            }
+
+            tbody.innerHTML = attendance
+            .map(
+                (item) => `
+            <tr>
+                <td>${item.attendanceId ?? "-"}</td>
+
+                <td>
+                ${item.studentName || ""}
+                ${item.studentSurname || ""}
+                </td>
+
+                <td>${item.lessonName || "-"}</td>
+
+                <td>
+                ${attendanceStatus(item.status)}
+                </td>
+
+                <td>
+                ${formatDate(item.recordedAt)}
+                </td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditAttendanceModal(${item.attendanceId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteAttendance(${item.attendanceId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `,
+            )
+            .join("");
+        }
+
+        function openEditAttendanceModal(attendanceId) {
+            const item = attendance.find(
+            (item) => Number(item.attendanceId) === Number(attendanceId),
+            );
+
+            if (!item) {
+            alert("Attendance not found.");
+            return;
+            }
+
+            currentEditingId = attendanceId;
+            modalType = "editAttendance";
+
+            document.getElementById("modalTitle").textContent = "Edit Attendance";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Student</label>
+
+            <select id="editAttendanceStudent">
+            ${students
+                .map(
+                (student) => `
+                    <option
+                    value="${student.userId}"
+                    ${
+                        Number(item.studentId) === Number(student.userId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${student.userName}
+                    ${student.userSurName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Lesson</label>
+
+            <select id="editAttendanceLesson">
+            ${lessons
+                .map(
+                (lesson) => `
+                    <option
+                    value="${lesson.lessonId}"
+                    ${
+                        Number(item.lessonId) === Number(lesson.lessonId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    Lesson #${lesson.lessonId}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+
+            <select id="editAttendanceStatus">
+            <option
+                value="0"
+                ${Number(item.status) === 0 ? "selected" : ""}
+            >
+                Present
+            </option>
+
+            <option
+                value="1"
+                ${Number(item.status) === 1 ? "selected" : ""}
+            >
+                Absent
+            </option>
+
+            <option
+                value="2"
+                ${Number(item.status) === 2 ? "selected" : ""}
+            >
+                Late
+            </option>
+
+            <option
+                value="3"
+                ${Number(item.status) === 3 ? "selected" : ""}
+            >
+                Excused
+            </option>
+            </select>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        STUDENT TASKS
+    ========================================================= */
+
+        function renderStudentTasks() {
+            const tbody = document.getElementById("studentTasksTable");
+
+            if (!studentTasks.length) {
+            tbody.innerHTML = emptyRow(6);
+            return;
+            }
+
+            tbody.innerHTML = studentTasks
+            .map((item) => {
+                const id = item.studentTaskId ?? item.id;
+
+                const student = users.find(
+                (user) => Number(user.userId) === Number(item.studentId),
+                );
+
+                const task = tasks.find(
+                (task) => Number(task.taskId) === Number(item.taskId),
+                );
+
+                return `
+            <tr>
+                <td>${id ?? "-"}</td>
+
+                <td>
+                ${
+                    student
+                    ? `${student.userName} ${student.userSurName}`
+                    : (item.studentId ?? "-")
+                }
+                </td>
+
+                <td>
+                ${task ? task.taskName : (item.taskId ?? "-")}
+                </td>
+
+                <td>
+                ${item.status ?? "-"}
+                </td>
+
+                <td>
+                ${item.mentorComment || "-"}
+                </td>
+
+                <td>
+                ${
+                    id
+                    ? `
+                        <button
+                        class="btn btn-primary"
+                        onclick="openEditStudentTaskModal(${id})"
+                        >
+                        Edit
+                        </button>
+
+                        <button
+                        class="btn btn-danger"
+                        onclick="deleteStudentTask(${id})"
+                        >
+                        Delete
+                        </button>
+                    `
+                    : "-"
+                }
+                </td>
+            </tr>
+            `;
+            })
+            .join("");
+        }
+
+        function openEditStudentTaskModal(studentTaskId) {
+            const item = studentTasks.find(
+            (item) =>
+                Number(item.studentTaskId ?? item.id) === Number(studentTaskId),
+            );
+
+            if (!item) {
+            alert("Student task not found.");
+            return;
+            }
+
+            currentEditingId = studentTaskId;
+            modalType = "editStudentTask";
+
+            document.getElementById("modalTitle").textContent = "Edit Student Task";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Student</label>
+
+            <select id="editStudentTaskStudent">
+            ${students
+                .map(
+                (student) => `
+                    <option
+                    value="${student.userId}"
+                    ${
+                        Number(item.studentId) === Number(student.userId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${student.userName}
+                    ${student.userSurName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Task</label>
+
+            <select id="editStudentTaskTask">
+            ${tasks
+                .map(
+                (task) => `
+                    <option
+                    value="${task.taskId}"
+                    ${
+                        Number(item.taskId) === Number(task.taskId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${task.taskName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+
+            <input
+            id="editStudentTaskStatus"
+            value="${item.status ?? ""}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Mentor Comment</label>
+
+            <textarea
+            id="editStudentTaskComment"
+            rows="4"
+            >${item.mentorComment || ""}</textarea>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        COURSE REQUESTS
+    ========================================================= */
+
+        function renderRequests() {
+            const tbody = document.getElementById("requestsTable");
+
+            if (!courseRequests.length) {
+            tbody.innerHTML = emptyRow(8);
+            return;
+            }
+
+            tbody.innerHTML = courseRequests
+            .map(
+                (request) => `
+            <tr>
+                <td>${request.courseRequestId ?? "-"}</td>
+
+                <td>${request.name || "-"}</td>
+
+                <td>${request.email || "-"}</td>
+
+                <td>${request.phone || "-"}</td>
+
+                <td>${request.courseName || "-"}</td>
+
+                <td>
+                ${requestStatus(request.status)}
+                </td>
+
+                <td>
+                ${formatDate(request.createdAt)}
+                </td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditRequestModal(${request.courseRequestId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="openRequestStatusModal(${request.courseRequestId})"
+                >
+                    Status
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteCourseRequest(${request.courseRequestId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `,
+            )
+            .join("");
+        }
+
+        function openEditRequestModal(requestId) {
+            const request = courseRequests.find(
+            (request) => Number(request.courseRequestId) === Number(requestId),
+            );
+
+            if (!request) {
+            alert("Course request not found.");
+            return;
+            }
+
+            currentEditingId = requestId;
+            modalType = "editRequest";
+
+            document.getElementById("modalTitle").textContent =
+            "Edit Course Request";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Name</label>
+
+            <input
+            id="editRequestName"
+            value="${request.name || ""}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+
+            <input
+            id="editRequestEmail"
+            type="email"
+            value="${request.email || ""}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Phone</label>
+
+            <input
+            id="editRequestPhone"
+            value="${request.phone || ""}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Course</label>
+
+            <select id="editRequestCourse">
+            ${courses
+                .map(
+                (course) => `
+                    <option
+                    value="${course.courseId}"
+                    ${
+                        Number(request.courseId) === Number(course.courseId)
+                        ? "selected"
+                        : ""
+                    }
+                    >
+                    ${course.title}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Message</label>
+
+            <textarea
+            id="editRequestMessage"
+            rows="4"
+            >${request.message || ""}</textarea>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        function openRequestStatusModal(requestId) {
+            const request = courseRequests.find(
+            (request) => Number(request.courseRequestId) === Number(requestId),
+            );
+
+            if (!request) {
+            alert("Course request not found.");
+            return;
+            }
+
+            currentEditingId = requestId;
+            modalType = "requestStatus";
+
+            document.getElementById("modalTitle").textContent =
+            "Change Request Status";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Status</label>
+
+            <input
+            id="requestStatusInput"
+            type="number"
+            min="1"
+            value="${request.status ?? 1}"
+            >
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        USERS
+    ========================================================= */
+
+        function renderUsers() {
+            const tbody = document.getElementById("usersTable");
+
+            if (!users.length) {
+            tbody.innerHTML = emptyRow(7);
+            return;
+            }
+
+            tbody.innerHTML = users
+            .map(
+                (user) => `
+            <tr>
+                <td>${user.userId ?? "-"}</td>
+
+                <td>
+                ${user.userName || ""}
+                ${user.userSurName || ""}
+                </td>
+
+                <td>${user.email || "-"}</td>
+
+                <td>${user.phoneNumber || "-"}</td>
+
+                <td>
+                ${roleName(user.roleId)}
+                </td>
+
+                <td>
+                ${
+                    groups.find(
+                    (group) => Number(group.groupId) === Number(user.groupId),
+                    )?.groupName || "No group"
+                }
+                </td>
+
+                <td>
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditUserModal(${user.userId})"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteUser(${user.userId})"
+                >
+                    Delete
+                </button>
+                </td>
+            </tr>
+            `,
+            )
+            .join("");
+        }
+
+        /* =========================================================
+        STATUS
+    ========================================================= */
+
+        function roleName(roleId) {
+            switch (Number(roleId)) {
+            case 1:
+                return "Student";
+
+            case 2:
+                return "Mentor";
+
+            case 3:
+                return "Admin";
+
+            default:
+                return "Unknown";
+            }
+        }
+
+        function attendanceStatus(status) {
+            const statuses = {
+            0: "Present",
+            1: "Absent",
+            2: "Late",
+            3: "Excused",
+            };
+
+            return `
+        <span class="badge">
+            ${statuses[Number(status)] || "Unknown"}
+        </span>
+        `;
+        }
+
+        function requestStatus(status) {
+            return `
+        <span class="badge">
+            Status ${status ?? "-"}
+        </span>
+        `;
+        }
+
+        /* =========================================================
+        NAVIGATION
+    ========================================================= */
+
+        function showPage(pageId, button) {
+            document.querySelectorAll(".page").forEach((page) => {
+            page.classList.remove("active");
+            });
+
+            const page = document.getElementById(pageId);
+
+            if (page) {
+            page.classList.add("active");
+            }
+
+            document.querySelectorAll(".nav button").forEach((btn) => {
+            btn.classList.remove("active");
+            });
+
+            if (button) {
+            button.classList.add("active");
+            }
+
+            const titles = {
+            dashboard: "Dashboard",
+            students: "Students",
+            mentors: "Mentors",
+            groups: "Groups",
+            courses: "Courses",
+            lessons: "Lessons",
+            tasks: "Tasks",
+            attendance: "Attendance",
+            studentTasks: "Student Tasks",
+            requests: "Course Requests",
+            users: "All Users",
+            };
+
+            document.getElementById("pageTitle").textContent =
+            titles[pageId] || pageId;
+        }
+
+        /* =========================================================
+        MODALS
+    ========================================================= */
+
+        function openModal() {
+            document.getElementById("modal").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("modal").classList.remove("show");
+
+            document.getElementById("modalForm").innerHTML = "";
+
+            modalType = null;
+            currentEditingId = null;
+        }
+
+        function closeModalOutside(event) {
+            if (event.target.id === "modal") {
+            closeModal();
+            }
+        }
+
+        /* =========================================================
+        CREATE USER
+    ========================================================= */
+
+        function openUserModal(roleId) {
+            modalType = "user";
+
+            document.getElementById("modalTitle").textContent =
+            roleId === 1 ? "Create Student" : "Create Mentor";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>First Name</label>
+            <input id="userName" required>
+        </div>
+
+        <div class="form-group">
+            <label>Last Name</label>
+            <input id="userSurname" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input
+            id="userEmail"
+            type="email"
+            required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Phone</label>
+            <input id="userPhone">
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input
+            id="userPassword"
+            type="password"
+            required
+            >
+        </div>
+
+        <input
+            type="hidden"
+            id="userRoleId"
+            value="${roleId}"
+        >
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        CREATE COURSE
+    ========================================================= */
+
+        function openCourseModal() {
+            modalType = "course";
+
+            document.getElementById("modalTitle").textContent = "Create Course";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Title</label>
+            <input id="courseTitle" required>
+        </div>
+
+        <div class="form-group">
+            <label>Slug</label>
+            <input id="courseSlug" required>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea
+            id="courseDescription"
+            rows="4"
+            ></textarea>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        CREATE GROUP
+    ========================================================= */
+
+        function openGroupModal() {
+            modalType = "group";
+
+            document.getElementById("modalTitle").textContent = "Create Group";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Group Name</label>
+            <input id="groupName" required>
+        </div>
+
+        <div class="form-group">
+            <label>Course</label>
+
+            <select id="groupCourse">
+            ${courses
+                .map(
+                (course) => `
+                    <option value="${course.courseId}">
+                    ${course.title}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Mentor</label>
+
+            <select id="groupMentor">
+            ${mentors
+                .map(
+                (mentor) => `
+                    <option value="${mentor.userId}">
+                    ${mentor.userName}
+                    ${mentor.userSurName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        CREATE LESSON
+    ========================================================= */
+
+        function openLessonModal() {
+            modalType = "lesson";
+
+            document.getElementById("modalTitle").textContent = "Create Lesson";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Group</label>
+
+            <select id="lessonGroup">
+            ${groups
+                .map(
+                (group) => `
+                    <option value="${group.groupId}">
+                    ${group.groupName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Start</label>
+
+            <input
+            id="lessonStart"
+            type="datetime-local"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>End</label>
+
+            <input
+            id="lessonEnd"
+            type="datetime-local"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Type</label>
+
+            <select id="lessonType">
+            <option value="Online">
+                Online
+            </option>
+
+            <option value="AtCourse">
+                AtCourse
+            </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Classroom / URL</label>
+
+            <input id="lessonClassroom">
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        CREATE TASK
+    ========================================================= */
+
+        function openTaskModal() {
+            modalType = "task";
+
+            document.getElementById("modalTitle").textContent = "Create Task";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Task Name</label>
+            <input id="taskName" required>
+        </div>
+
+        <div class="form-group">
+            <label>Deadline</label>
+
+            <input
+            id="taskDeadline"
+            type="datetime-local"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Group</label>
+
+            <select id="taskGroup">
+            ${groups
+                .map(
+                (group) => `
+                    <option value="${group.groupId}">
+                    ${group.groupName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Mentor Comment</label>
+
+            <textarea
+            id="taskComment"
+            rows="4"
+            ></textarea>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        CREATE ATTENDANCE
+    ========================================================= */
+
+        function openAttendanceModal() {
+            modalType = "attendance";
+
+            document.getElementById("modalTitle").textContent = "Create Attendance";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Student</label>
+
+            <select id="attendanceStudent">
+            ${students
+                .map(
+                (student) => `
+                    <option value="${student.userId}">
+                    ${student.userName}
+                    ${student.userSurName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Lesson</label>
+
+            <select id="attendanceLesson">
+            ${lessons
+                .map(
+                (lesson) => `
+                    <option value="${lesson.lessonId}">
+                    Lesson #${lesson.lessonId}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+
+            <select id="attendanceStatus">
+            <option value="0">Present</option>
+            <option value="1">Absent</option>
+            <option value="2">Late</option>
+            <option value="3">Excused</option>
+            </select>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        CREATE STUDENT TASK
+    ========================================================= */
+
+        function openStudentTaskModal() {
+            modalType = "studentTask";
+
+            document.getElementById("modalTitle").textContent =
+            "Create Student Task";
+
+            document.getElementById("modalForm").innerHTML = `
+        <div class="form-group">
+            <label>Student</label>
+
+            <select id="studentTaskStudent">
+            ${students
+                .map(
+                (student) => `
+                    <option value="${student.userId}">
+                    ${student.userName}
+                    ${student.userSurName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Task</label>
+
+            <select id="studentTaskTask">
+            ${tasks
+                .map(
+                (task) => `
+                    <option value="${task.taskId}">
+                    ${task.taskName}
+                    </option>
+                `,
+                )
+                .join("")}
+            </select>
+        </div>
+        `;
+
+            openModal();
+        }
+
+        /* =========================================================
+        SUBMIT MODAL
+    ========================================================= */
+
+        async function submitModal(event) {
+            event.preventDefault();
+
+            try {
+            /* -------------------------------------------------------
+            CREATE USER
+        ------------------------------------------------------- */
+
+            if (modalType === "user") {
+                await apiRequest(API.users, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    userName: document.getElementById("userName").value.trim(),
+
+                    userSurName: document
+                    .getElementById("userSurname")
+                    .value.trim(),
+
+                    email: document.getElementById("userEmail").value.trim(),
+
+                    phoneNumber: document.getElementById("userPhone").value.trim(),
+
+                    password: document.getElementById("userPassword").value,
+
+                    roleId: Number(document.getElementById("userRoleId").value),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            ASSIGN ONE STUDENT TO GROUP
+        ------------------------------------------------------- */
+
+            if (modalType === "studentGroup") {
+                const studentId = Number(currentEditingId);
+
+                const groupValue = document.getElementById("studentGroupId").value;
+
+                const groupId = groupValue === "" ? null : Number(groupValue);
+
+                const student = users.find(
+                (user) => Number(user.userId) === studentId,
+                );
+
+                if (!student) {
+                alert("Student not found.");
+                return;
+                }
+
+                await apiRequest(`${API.users}/${studentId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    userId: studentId,
+                    userName: student.userName,
+                    userSurName: student.userSurName,
+                    email: student.email,
+                    phoneNumber: student.phoneNumber,
+                    roleId: student.roleId,
+                    groupId: groupId,
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            ADD MULTIPLE STUDENTS TO GROUP
+        ------------------------------------------------------- */
+
+            if (modalType === "addStudentsToGroup") {
+                const checkboxes = document.querySelectorAll(
+                ".group-student-checkbox:checked",
+                );
+
+                if (!checkboxes.length) {
+                alert("Select at least one student.");
+                return;
+                }
+
+                const selectedIds = Array.from(checkboxes).map((checkbox) =>
+                Number(checkbox.value),
+                );
+
+                for (const studentId of selectedIds) {
+                const student = users.find(
+                    (user) => Number(user.userId) === studentId,
+                );
+
+                if (!student) {
+                    continue;
+                }
+
+                await apiRequest(`${API.users}/${studentId}`, {
+                    method: "PUT",
+
+                    body: JSON.stringify({
+                    userId: student.userId,
+                    userName: student.userName,
+                    userSurName: student.userSurName,
+                    email: student.email,
+                    phoneNumber: student.phoneNumber,
+                    roleId: student.roleId,
+                    groupId: Number(currentGroupId),
+                    }),
+                });
+                }
+
+                const groupId = currentGroupId;
+
+                closeModal();
+                await loadAllData();
+
+                await openGroupStudentsModal(groupId);
+
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT USER
+        ------------------------------------------------------- */
+
+            if (modalType === "editUser") {
+                const user = users.find(
+                (user) => Number(user.userId) === Number(currentEditingId),
+                );
+
+                if (!user) {
+                alert("User not found.");
+                return;
+                }
+
+                const groupElement = document.getElementById("editUserGroup");
+
+                await apiRequest(`${API.users}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    userId: currentEditingId,
+
+                    userName: document.getElementById("editUserName").value.trim(),
+
+                    userSurName: document
+                    .getElementById("editUserSurname")
+                    .value.trim(),
+
+                    email: document.getElementById("editUserEmail").value.trim(),
+
+                    phoneNumber: document
+                    .getElementById("editUserPhone")
+                    .value.trim(),
+
+                    roleId: Number(document.getElementById("editUserRole").value),
+
+                    groupId: groupElement
+                    ? groupElement.value === ""
+                        ? null
+                        : Number(groupElement.value)
+                    : user.groupId,
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            CREATE COURSE
+        ------------------------------------------------------- */
+
+            if (modalType === "course") {
+                await apiRequest(API.courses, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    title: document.getElementById("courseTitle").value.trim(),
+
+                    slug: document.getElementById("courseSlug").value.trim(),
+
+                    description: document
+                    .getElementById("courseDescription")
+                    .value.trim(),
+
+                    isActive: true,
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT COURSE
+        ------------------------------------------------------- */
+
+            if (modalType === "editCourse") {
+                await apiRequest(`${API.courses}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    courseId: currentEditingId,
+
+                    title: document.getElementById("editCourseTitle").value.trim(),
+
+                    slug: document.getElementById("editCourseSlug").value.trim(),
+
+                    description: document
+                    .getElementById("editCourseDescription")
+                    .value.trim(),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            CREATE GROUP
+        ------------------------------------------------------- */
+
+            if (modalType === "group") {
+                const groupName = document.getElementById("groupName").value.trim();
+
+                const exists = groups.some(
+                (group) =>
+                    group.groupName.trim().toLowerCase() ===
+                    groupName.toLowerCase(),
+                );
+
+                if (exists) {
+                alert("A group with this name already exists.");
+                return;
+                }
+
+                await apiRequest(API.groups, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    groupName: groupName,
+
+                    courseId: Number(document.getElementById("groupCourse").value),
+
+                    createdByMentorId: Number(
+                    document.getElementById("groupMentor").value,
+                    ),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT GROUP
+        ------------------------------------------------------- */
+
+            if (modalType === "editGroup") {
+                const groupName = document
+                .getElementById("editGroupName")
+                .value.trim();
+
+                const duplicate = groups.some(
+                (group) =>
+                    Number(group.groupId) !== Number(currentEditingId) &&
+                    group.groupName.trim().toLowerCase() ===
+                    groupName.toLowerCase(),
+                );
+
+                if (duplicate) {
+                alert("A group with this name already exists.");
+                return;
+                }
+
+                await apiRequest(`${API.groups}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    groupId: currentEditingId,
+
+                    groupName: groupName,
+
+                    courseId: Number(
+                    document.getElementById("editGroupCourse").value,
+                    ),
+
+                    createdByMentorId: Number(
+                    document.getElementById("editGroupMentor").value,
+                    ),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            CREATE LESSON
+        ------------------------------------------------------- */
+
+            if (modalType === "lesson") {
+                await apiRequest(API.lessons, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    groupId: Number(document.getElementById("lessonGroup").value),
+
+                    lessonStarts: document.getElementById("lessonStart").value,
+
+                    lessonEnds: document.getElementById("lessonEnd").value,
+
+                    type: document.getElementById("lessonType").value,
+
+                    classRoom: document
+                    .getElementById("lessonClassroom")
+                    .value.trim(),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT LESSON
+        ------------------------------------------------------- */
+
+            if (modalType === "editLesson") {
+                await apiRequest(`${API.lessons}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    lessonId: currentEditingId,
+
+                    groupId: Number(
+                    document.getElementById("editLessonGroup").value,
+                    ),
+
+                    lessonStarts: document.getElementById("editLessonStart").value,
+
+                    lessonEnds: document.getElementById("editLessonEnd").value,
+
+                    type: document.getElementById("editLessonType").value,
+
+                    classRoom: document
+                    .getElementById("editLessonClassroom")
+                    .value.trim(),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            CREATE TASK
+        ------------------------------------------------------- */
+
+            if (modalType === "task") {
+                await apiRequest(API.tasks, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    taskName: document.getElementById("taskName").value.trim(),
+
+                    deadLine: document.getElementById("taskDeadline").value,
+
+                    groupId: Number(document.getElementById("taskGroup").value),
+
+                    mentorComment: document
+                    .getElementById("taskComment")
+                    .value.trim(),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT TASK
+        ------------------------------------------------------- */
+
+            if (modalType === "editTask") {
+                await apiRequest(`${API.tasks}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    taskId: currentEditingId,
+
+                    taskName: document.getElementById("editTaskName").value.trim(),
+
+                    deadLine: document.getElementById("editTaskDeadline").value,
+
+                    groupId: Number(document.getElementById("editTaskGroup").value),
+
+                    mentorComment: document
+                    .getElementById("editTaskComment")
+                    .value.trim(),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            CREATE ATTENDANCE
+        ------------------------------------------------------- */
+
+            if (modalType === "attendance") {
+                await apiRequest(API.attendance, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    studentId: Number(
+                    document.getElementById("attendanceStudent").value,
+                    ),
+
+                    lessonId: Number(
+                    document.getElementById("attendanceLesson").value,
+                    ),
+
+                    status: Number(
+                    document.getElementById("attendanceStatus").value,
+                    ),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT ATTENDANCE
+        ------------------------------------------------------- */
+
+            if (modalType === "editAttendance") {
+                await apiRequest(`${API.attendance}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    attendanceId: currentEditingId,
+
+                    studentId: Number(
+                    document.getElementById("editAttendanceStudent").value,
+                    ),
+
+                    lessonId: Number(
+                    document.getElementById("editAttendanceLesson").value,
+                    ),
+
+                    status: Number(
+                    document.getElementById("editAttendanceStatus").value,
+                    ),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            CREATE STUDENT TASK
+        ------------------------------------------------------- */
+
+            if (modalType === "studentTask") {
+                await apiRequest(API.studentTasks, {
+                method: "POST",
+
+                body: JSON.stringify({
+                    studentId: Number(
+                    document.getElementById("studentTaskStudent").value,
+                    ),
+
+                    taskId: Number(
+                    document.getElementById("studentTaskTask").value,
+                    ),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT STUDENT TASK
+        ------------------------------------------------------- */
+
+            if (modalType === "editStudentTask") {
+                await apiRequest(`${API.studentTasks}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    studentTaskId: currentEditingId,
+
+                    studentId: Number(
+                    document.getElementById("editStudentTaskStudent").value,
+                    ),
+
+                    taskId: Number(
+                    document.getElementById("editStudentTaskTask").value,
+                    ),
+
+                    status: document.getElementById("editStudentTaskStatus").value,
+
+                    mentorComment: document
+                    .getElementById("editStudentTaskComment")
+                    .value.trim(),
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            EDIT COURSE REQUEST
+        ------------------------------------------------------- */
+
+            if (modalType === "editRequest") {
+                const request = courseRequests.find(
+                (request) =>
+                    Number(request.courseRequestId) === Number(currentEditingId),
+                );
+
+                await apiRequest(`${API.courseRequests}/${currentEditingId}`, {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    courseRequestId: currentEditingId,
+
+                    courseId: Number(
+                    document.getElementById("editRequestCourse").value,
+                    ),
+
+                    name: document.getElementById("editRequestName").value.trim(),
+
+                    email: document.getElementById("editRequestEmail").value.trim(),
+
+                    phone: document.getElementById("editRequestPhone").value.trim(),
+
+                    message: document
+                    .getElementById("editRequestMessage")
+                    .value.trim(),
+
+                    status: request?.status,
+                }),
+                });
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+
+            /* -------------------------------------------------------
+            COURSE REQUEST STATUS
+        ------------------------------------------------------- */
+
+            if (modalType === "requestStatus") {
+                await apiRequest(
+                `${API.courseRequests}/${currentEditingId}/status`,
+                {
+                    method: "PATCH",
+
+                    body: JSON.stringify({
+                    status: Number(
+                        document.getElementById("requestStatusInput").value,
+                    ),
+                    }),
+                },
+                );
+
+                closeModal();
+                await loadAllData();
+                return;
+            }
+            } catch (error) {
+            console.error(error);
+
+            alert("Request failed:\n\n" + error.message);
+            }
+        }
+
+        /* =========================================================
+        DELETE
+    ========================================================= */
+
+        async function deleteEntity(url, message = "Delete this item?") {
+            if (!confirm(message)) {
+            return;
+            }
+
+            try {
+            await apiRequest(url, {
+                method: "DELETE",
+            });
+
+            await loadAllData();
+            } catch (error) {
+            console.error(error);
+
+            alert(error.message);
+            }
+        }
+
+        function deleteUser(id) {
+            return deleteEntity(`${API.users}/${id}`, "Delete this user?");
+        }
+
+        function deleteGroup(id) {
+            return deleteEntity(`${API.groups}/${id}`, "Delete this group?");
+        }
+
+        function deleteCourse(id) {
+            return deleteEntity(`${API.courses}/${id}`, "Delete this course?");
+        }
+
+        function deleteLesson(id) {
+            return deleteEntity(`${API.lessons}/${id}`, "Delete this lesson?");
+        }
+
+        function deleteTask(id) {
+            return deleteEntity(`${API.tasks}/${id}`, "Delete this task?");
+        }
+
+        function deleteAttendance(id) {
+            return deleteEntity(
+            `${API.attendance}/${id}`,
+            "Delete this attendance?",
+            );
+        }
+
+        function deleteStudentTask(id) {
+            return deleteEntity(
+            `${API.studentTasks}/${id}`,
+            "Delete this student task?",
+            );
+        }
+
+        function deleteCourseRequest(id) {
+            return deleteEntity(
+            `${API.courseRequests}/${id}`,
+            "Delete this course request?",
+            );
+        }
+
+        /* =========================================================
+        HELPERS
+    ========================================================= */
+
+        function formatDate(value) {
+            if (!value) {
+            return "-";
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+            return value;
+            }
+
+            return date.toLocaleString();
+        }
+
+        function toDateTimeLocal(value) {
+            if (!value) {
+            return "";
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+            return "";
+            }
+
+            const pad = (number) => String(number).padStart(2, "0");
+
+            return (
+            `${date.getFullYear()}-` +
+            `${pad(date.getMonth() + 1)}-` +
+            `${pad(date.getDate())}T` +
+            `${pad(date.getHours())}:` +
+            `${pad(date.getMinutes())}`
+            );
+        }
+
+        function emptyRow(columns) {
+            return `
+        <tr>
+            <td
+            colspan="${columns}"
+            class="empty"
+            >
+            No data found
+            </td>
+        </tr>
+        `;
+        }
+
+        function setBackendStatus(text, className) {
+            const element = document.getElementById("backendStatus");
+
+            element.textContent = text;
+
+            element.className = `backend-status ${className}`;
+        }
+
+       document.addEventListener("DOMContentLoaded", () => {
+  loadAllData();
+});
+        </script>
+    </body>
+    </html>
