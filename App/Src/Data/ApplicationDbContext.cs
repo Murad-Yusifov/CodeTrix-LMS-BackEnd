@@ -30,6 +30,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<CourseModel> Courses { get; set; }
     public DbSet<CourseRequestModel> CourseRequests { get; set; }
     public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
+    public DbSet<AttendanceStudentModel> AttendanceStudents { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -90,19 +91,38 @@ public class ApplicationDbContext : DbContext
 
         // Attendance Existing Relationship code
         modelBuilder.Entity<AttendanceModel>()
-     .HasKey(a => a.AttendanceId);
-
-        modelBuilder.Entity<AttendanceModel>()
-            .HasOne(a => a.Student)
-            .WithMany(u => u.Attendances)
-            .HasForeignKey(a => a.StudentId)
-            .OnDelete(DeleteBehavior.Restrict);
+      .HasKey(a => a.AttendanceId);
 
         modelBuilder.Entity<AttendanceModel>()
             .HasOne(a => a.Lesson)
             .WithMany()
             .HasForeignKey(a => a.LessonId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AttendanceModel>()
+            .HasOne(a => a.Group)
+            .WithMany()
+            .HasForeignKey(a => a.GroupId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // =====================================================
+        // ATTENDANCE STUDENTS
+        // =====================================================
+
+        modelBuilder.Entity<AttendanceStudentModel>()
+            .HasKey(x => x.AttendanceStudentId);
+
+        modelBuilder.Entity<AttendanceStudentModel>()
+            .HasOne(x => x.Attendance)
+            .WithMany(a => a.Students)
+            .HasForeignKey(x => x.AttendanceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AttendanceStudentModel>()
+            .HasOne(x => x.Student)
+            .WithMany()
+            .HasForeignKey(x => x.StudentId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<CourseModel>()
        .HasKey(x => x.CourseId);

@@ -496,3 +496,7 @@ Example Structure: https://github.com/kawser2133/clean-structured-project/tree/d
   "phoneNumber": "+994 55 413 46 36",
   "password": "123456789"
 }
+
+Email = "murad@codetrix.com",
+                PhoneNumber = "+994503333333",
+                PasswordHash = hasher.Hash("Student123!"),

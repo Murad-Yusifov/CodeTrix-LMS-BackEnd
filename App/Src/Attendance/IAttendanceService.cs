@@ -1,4 +1,3 @@
-using BackEndCodeTrix.Src.Attendance.AttendanceDTO;
 using BackEndCodeTrix.Src.LessonSchedule.AttendanceDTO;
 
 namespace BackEndCodeTrix.Src.LessonSchedule;

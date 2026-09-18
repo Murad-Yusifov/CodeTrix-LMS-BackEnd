@@ -1,4 +1,3 @@
-using BackEndCodeTrix.Src.Attendance;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.LessonSchedule;
 using BackEndCodeTrix.Src.Tasks;

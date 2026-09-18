@@ -1,3 +1,4 @@
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -42,7 +43,8 @@ public class AuthService : IAuthService
         return await CreateAuthResponseAsync(user);
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
+    public async Task<AuthResponseDto> RegisterAsync(
+        RegisterDto dto)
     {
         if (await _repository.EmailExistsAsync(dto.Email))
         {
@@ -57,7 +59,7 @@ public class AuthService : IAuthService
             Email = dto.Email,
             PhoneNumber = dto.PhoneNumber,
             PasswordHash = _passwordHasher.Hash(dto.Password),
-            RoleId = 1,
+            RoleId = dto.RoleId,
             GroupId = null
         };
 
@@ -75,6 +77,7 @@ public class AuthService : IAuthService
 
         return await CreateAuthResponseAsync(createdUser);
     }
+
     public async Task<CurrentUserDto> GetMeAsync(
         int userId)
     {
@@ -122,6 +125,12 @@ public class AuthService : IAuthService
         {
             throw new UnauthorizedAccessException(
                 "Refresh token has expired.");
+        }
+
+        if (storedToken.User == null)
+        {
+            throw new UnauthorizedAccessException(
+                "User associated with refresh token was not found.");
         }
 
         // Revoke old refresh token
@@ -184,17 +193,7 @@ public class AuthService : IAuthService
     private string GenerateAccessToken(
         UserModel user)
     {
-        Console.WriteLine($"USER NULL: {user == null}");
-
-        if (user != null)
-        {
-            Console.WriteLine($"ID: {user.UserId}");
-            Console.WriteLine($"Email: {user.Email}");
-            Console.WriteLine($"Name: {user.UserName}");
-            Console.WriteLine($"Role: {user.Role?.RoleName}");
-        }
-
-
+        
         var key =
             _configuration["Jwt:Key"];
 
@@ -247,3 +246,5 @@ public class AuthService : IAuthService
             RandomNumberGenerator.GetBytes(64));
     }
 }
+
+

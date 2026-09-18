@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeTrix LMS Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .login-box {
+            width: 380px;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .test-users {
+            margin-top: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .test-users h3 {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .test-button {
+            margin-bottom: 8px;
+            background: #374151;
+            font-size: 14px;
+        }
+
+        .test-button:hover {
+            background: #1f2937;
+        }
+
+        #error {
+            margin-top: 15px;
+            color: #dc2626;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <h1>CodeTrix LMS</h1>
+
+    <form id="loginForm">
+
+        <div class="form-group">
+            <label>Email</label>
+
+            <input
+                type="email"
+                id="email"
+                required
+                placeholder="Enter your email"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="password"
+                required
+                placeholder="Enter your password"
+            >
+        </div>
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+
+    <!-- TEST USERS -->
+
+    <div class="test-users">
+
+        <h3>Test Accounts</h3>
+
+        <button
+            type="button"
+            class="test-button"
+            onclick="fillTestUser('student')">
+            Login as Student
+        </button>
+
+        <button
+            type="button"
+            class="test-button"
+            onclick="fillTestUser('mentor')">
+            Login as Mentor
+        </button>
+
+        <button
+            type="button"
+            class="test-button"
+            onclick="fillTestUser('admin')">
+            Login as Admin
+        </button>
+
+    </div>
+
+
+    <div id="error"></div>
+
+</div>
+
+
+<script>
+
+const API_BASE = "http://localhost:5293/api";
+
+const loginForm =
+    document.getElementById("loginForm");
+
+const errorElement =
+    document.getElementById("error");
+
+
+// =====================================================
+// TEST USERS
+// =====================================================
+
+const testUsers = {
+
+    student: {
+        email: "murad@codetrix.com",
+        password: "Student123!"
+    },
+
+    mentor: {
+        email: "mentor@codetrix.com",
+        password: "Mentor123!"
+    },
+
+    admin: {
+        email: "admin@codetrix.com",
+        password: "Admin123!"
+    }
+
+};
+
+
+// =====================================================
+// FILL TEST USER
+// =====================================================
+
+function fillTestUser(type) {
+
+    const user = testUsers[type];
+
+    document.getElementById("email").value =
+        user.email;
+
+    document.getElementById("password").value =
+        user.password;
+
+    errorElement.textContent = "";
+}
+
+
+// =====================================================
+// LOGIN
+// =====================================================
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        errorElement.textContent = "";
+
+        const email =
+            document.getElementById("email")
+                .value
+                .trim();
+
+        const password =
+            document.getElementById("password")
+                .value;
+
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE}/Auth/login`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    data.error ||
+                    "Invalid email or password."
+                );
+
+            }
+
+
+            // Save complete login response
+
+            localStorage.setItem(
+                "codetrixUser",
+                JSON.stringify(data)
+            );
+
+
+            // Get role
+
+            const role =
+                data.role ||
+                getRoleName(data.roleId);
+
+
+            // Redirect
+
+            if (role === "Admin") {
+
+                window.location.href =
+                    "AdminPage.html";
+
+            }
+
+            else if (role === "Mentor") {
+
+                window.location.href =
+                    "UserPage.html";
+
+            }
+
+            else if (role === "Student") {
+
+                window.location.href =
+                    "UserPage.html";
+
+            }
+
+            else {
+
+                throw new Error(
+                    "Unknown user role."
+                );
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            errorElement.textContent =
+                error.message ||
+                "Login failed.";
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// ROLE ID → ROLE NAME
+// =====================================================
+
+function getRoleName(roleId) {
+
+    switch (Number(roleId)) {
+
+        case 1:
+            return "Student";
+
+        case 2:
+            return "Mentor";
+
+        case 3:
+            return "Admin";
+
+        default:
+            return "Unknown";
+    }
+}
+
+</script>
+
+</body>
+</html>

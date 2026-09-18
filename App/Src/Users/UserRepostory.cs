@@ -127,11 +127,12 @@ public class UserRepository : IUserRepository
     public async Task<List<AttendanceModel>> GetStudentAttendanceAsync(int userId)
     {
         return await _context.StudentAttendances
-            .AsNoTracking()
-            .Where(a => a.StudentId == userId)
-            .Include(a => a.Student)
-            .Include(a => a.Lesson)
-            .ToListAsync();
+        .AsNoTracking()
+        .Where(a => a.Students.Any(s => s.StudentId == userId))
+        .Include(a => a.Students)
+            .ThenInclude(s => s.Student)
+        .Include(a => a.Lesson)
+        .ToListAsync();
 
 
     }

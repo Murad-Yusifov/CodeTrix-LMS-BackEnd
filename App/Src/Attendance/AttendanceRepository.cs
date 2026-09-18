@@ -16,50 +16,66 @@ public class AttendanceRepository : IAttendanceRepository
     {
         return await _context.StudentAttendances
             .AsNoTracking()
-            .Include(a => a.Student)
+            .Include(a => a.Students)
+                .ThenInclude(s => s.Student)
             .Include(a => a.Lesson)
+            .Include(a => a.Group)
             .ToListAsync();
     }
 
     public async Task<AttendanceModel?> GetByIdAsync(int id)
     {
         return await _context.StudentAttendances
-            .Include(a => a.Student)
+            .Include(a => a.Students)
+                .ThenInclude(s => s.Student)
             .Include(a => a.Lesson)
-            .FirstOrDefaultAsync(a => a.AttendanceId == id);
+            .Include(a => a.Group)
+            .FirstOrDefaultAsync(a =>
+                a.AttendanceId == id);
     }
 
-    public async Task<List<AttendanceModel>> GetByStudentIdAsync(int studentId)
+    public async Task<List<AttendanceModel>> GetByStudentIdAsync(
+        int studentId)
     {
         return await _context.StudentAttendances
             .AsNoTracking()
-            .Where(a => a.StudentId == studentId)
-            .Include(a => a.Student)
+            .Where(a =>
+                a.Students.Any(s =>
+                    s.StudentId == studentId))
+            .Include(a => a.Students)
+                .ThenInclude(s => s.Student)
             .Include(a => a.Lesson)
+            .Include(a => a.Group)
             .OrderByDescending(a => a.Lesson.LessonStarts)
             .ToListAsync();
     }
 
-    public async Task<List<AttendanceModel>> GetByLessonIdAsync(int lessonId)
+    public async Task<List<AttendanceModel>> GetByLessonIdAsync(
+        int lessonId)
     {
         return await _context.StudentAttendances
             .AsNoTracking()
             .Where(a => a.LessonId == lessonId)
-            .Include(a => a.Student)
+            .Include(a => a.Students)
+                .ThenInclude(s => s.Student)
             .Include(a => a.Lesson)
+            .Include(a => a.Group)
             .ToListAsync();
     }
 
     public async Task<bool> StudentExistsAsync(int studentId)
     {
         return await _context.Users
-            .AnyAsync(u => u.UserId == studentId);
+            .AnyAsync(u =>
+                u.UserId == studentId &&
+                u.RoleId == 1);
     }
 
     public async Task<bool> LessonExistsAsync(int lessonId)
     {
         return await _context.Lessons
-            .AnyAsync(l => l.LessonId == lessonId);
+            .AnyAsync(l =>
+                l.LessonId == lessonId);
     }
 
     public async Task<bool> AttendanceExistsAsync(
@@ -68,8 +84,9 @@ public class AttendanceRepository : IAttendanceRepository
     {
         return await _context.StudentAttendances
             .AnyAsync(a =>
-                a.StudentId == studentId &&
-                a.LessonId == lessonId);
+                a.LessonId == lessonId &&
+                a.Students.Any(s =>
+                    s.StudentId == studentId));
     }
 
     public async Task<AttendanceModel> CreateAsync(
@@ -88,19 +105,21 @@ public class AttendanceRepository : IAttendanceRepository
         var existingAttendance =
             await _context.StudentAttendances
                 .FirstOrDefaultAsync(a =>
-                    a.AttendanceId == attendance.AttendanceId);
+                    a.AttendanceId ==
+                    attendance.AttendanceId);
 
         if (existingAttendance is null)
         {
             return null;
         }
 
-        existingAttendance.Status = attendance.Status;
-        existingAttendance.RecordedAt = attendance.RecordedAt;
+        existingAttendance.RecordedAt =
+            attendance.RecordedAt;
 
         await _context.SaveChangesAsync();
 
-        return await GetByIdAsync(attendance.AttendanceId);
+        return await GetByIdAsync(
+            attendance.AttendanceId);
     }
 
     public async Task<bool> DeleteAsync(int id)

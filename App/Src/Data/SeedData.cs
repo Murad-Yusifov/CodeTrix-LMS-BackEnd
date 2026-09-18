@@ -196,13 +196,13 @@ public static class SeedData
             context.SaveChanges();
         }
 
-                    // =====================================================
-            // 4.1. COURSE REQUESTS
-            // =====================================================
+        // =====================================================
+        // 4.1. COURSE REQUESTS
+        // =====================================================
 
-            if (!context.CourseRequests.Any())
-            {
-                var courseRequests = new List<CourseRequestModel>
+        if (!context.CourseRequests.Any())
+        {
+            var courseRequests = new List<CourseRequestModel>
                 {
                     new CourseRequestModel
                     {
@@ -257,9 +257,9 @@ public static class SeedData
                     }
                 };
 
-                context.CourseRequests.AddRange(courseRequests);
-                context.SaveChanges();
-            }
+            context.CourseRequests.AddRange(courseRequests);
+            context.SaveChanges();
+        }
 
         // =====================================================
         // 4. GROUPS
@@ -466,66 +466,79 @@ public static class SeedData
 
         if (!context.StudentAttendances.Any())
         {
-            var attendances = new List<AttendanceModel>
+            var attendance1 = new AttendanceModel
             {
-                // Lesson 1
-                new AttendanceModel
-                {
-                    AttendanceId = 1,
-                    StudentId = 3,
-                    LessonId = 1,
-                    Status = AttendanceStatus.Present,
-                    RecordedAt = DateTime.UtcNow
-                },
-
-                new AttendanceModel
-                {
-                    AttendanceId = 2,
-                    StudentId = 4,
-                    LessonId = 1,
-                    Status = AttendanceStatus.Absent,
-                    RecordedAt = DateTime.UtcNow
-                },
-
-                new AttendanceModel
-                {
-                    AttendanceId = 3,
-                    StudentId = 5,
-                    LessonId = 1,
-                    Status = AttendanceStatus.Late,
-                    RecordedAt = DateTime.UtcNow
-                },
-
-                // Lesson 2
-                new AttendanceModel
-                {
-                    AttendanceId = 4,
-                    StudentId = 3,
-                    LessonId = 2,
-                    Status = AttendanceStatus.Present,
-                    RecordedAt = DateTime.UtcNow
-                },
-
-                new AttendanceModel
-                {
-                    AttendanceId = 5,
-                    StudentId = 4,
-                    LessonId = 2,
-                    Status = AttendanceStatus.Present,
-                    RecordedAt = DateTime.UtcNow
-                },
-
-                new AttendanceModel
-                {
-                    AttendanceId = 6,
-                    StudentId = 5,
-                    LessonId = 2,
-                    Status = AttendanceStatus.Absent,
-                    RecordedAt = DateTime.UtcNow
-                }
+                AttendanceId = 1,
+                LessonId = 1,
+                GroupId = 1,
+                RecordedAt = DateTime.UtcNow
             };
 
-            context.StudentAttendances.AddRange(attendances);
+            var attendance2 = new AttendanceModel
+            {
+                AttendanceId = 2,
+                LessonId = 2,
+                GroupId = 1,
+                RecordedAt = DateTime.UtcNow
+            };
+
+            context.StudentAttendances.AddRange(
+                attendance1,
+                attendance2
+            );
+
+            context.SaveChanges();
+
+            // =================================================
+            // STUDENTS WHO ATTENDED
+            // =================================================
+
+            var attendanceStudents = new List<AttendanceStudentModel>
+    {
+        // ---------------------------------------------
+        // Lesson 1
+        // Murad   → Present
+        // Leyla   → Present
+        // Ali     → Absent (not included)
+        // ---------------------------------------------
+
+        new AttendanceStudentModel
+        {
+            AttendanceStudentId = 1,
+            AttendanceId = 1,
+            StudentId = 3
+        },
+
+        new AttendanceStudentModel
+        {
+            AttendanceStudentId = 2,
+            AttendanceId = 1,
+            StudentId = 5
+        },
+
+        // ---------------------------------------------
+        // Lesson 2
+        // Murad   → Present
+        // Ali     → Present
+        // Leyla   → Absent (not included)
+        // ---------------------------------------------
+
+        new AttendanceStudentModel
+        {
+            AttendanceStudentId = 3,
+            AttendanceId = 2,
+            StudentId = 3
+        },
+
+        new AttendanceStudentModel
+        {
+            AttendanceStudentId = 4,
+            AttendanceId = 2,
+            StudentId = 4
+        }
+    };
+
+            context.AttendanceStudents.AddRange(attendanceStudents);
             context.SaveChanges();
         }
     }

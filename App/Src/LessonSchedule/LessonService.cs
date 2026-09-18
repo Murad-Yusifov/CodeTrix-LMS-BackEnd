@@ -62,28 +62,32 @@ public class LessonService : ILessonService
 
     // CREATE
     public async Task<(LessonResponseDto? Lesson, string? Error)>
-        CreateLessonAsync(CreateLessonDto dto)
+      CreateLessonAsync(CreateLessonDto dto)
     {
-        var groupExists =
-            await _context.Groups
-                .AnyAsync(g => g.GroupId == dto.GroupId);
+        // Check group
+        var groupExists = await _context.Groups
+            .AnyAsync(g => g.GroupId == dto.GroupId);
 
         if (!groupExists)
         {
             return (null, "GroupNotFound");
         }
 
-        var lesson =
-            _mapper.Map<LessonModel>(dto);
+        // Create lesson
+        var lesson = _mapper.Map<LessonModel>(dto);
 
         var createdLesson =
-            await _lessonRepository
-                .CreateLessonAsync(lesson);
+            await _lessonRepository.CreateLessonAsync(lesson);
+
+        // Automatically create attendance
+        // for every student in the group
+        await _lessonRepository.CreateAttendanceForLessonAsync(
+            createdLesson.LessonId,
+            createdLesson.GroupId
+        );
 
         return (
-            _mapper.Map<LessonResponseDto>(
-                createdLesson
-            ),
+            _mapper.Map<LessonResponseDto>(createdLesson),
             null
         );
     }
@@ -107,9 +111,7 @@ public class LessonService : ILessonService
 
         var groupExists =
             await _context.Groups
-                .AnyAsync(
-                    g => g.GroupId == dto.GroupId
-                );
+                .AnyAsync(g => g.GroupId == dto.GroupId);
 
         if (!groupExists)
         {
@@ -136,19 +138,20 @@ public class LessonService : ILessonService
 
 
     // DELETE
-    public async Task<bool> DeleteLessonAsync(
-        int id
-    )
+    public async Task<bool> DeleteLessonAsync(int id)
     {
         return await _lessonRepository
             .DeleteLessonAsync(id);
     }
 
-    public async Task <GroupResponseDto?> GetGroupByLessonIdAsync(int lessonId)
+    public async Task<GroupResponseDto?>
+        GetGroupByLessonIdAsync(int lessonId)
     {
-        var group = await _lessonRepository.GetGroupByLessonIdAsync(lessonId);
+        var group =
+            await _lessonRepository
+                .GetGroupByLessonIdAsync(lessonId);
 
         return _mapper.Map<GroupResponseDto>(group);
-        
+
     }
 }

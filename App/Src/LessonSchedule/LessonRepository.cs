@@ -1,4 +1,3 @@
-using AutoMapper;
 using BackEndCodeTrix.Src.Data;
 using BackEndCodeTrix.Src.Group;
 using BackEndCodeTrix.Src.LessonSchedule;
@@ -10,9 +9,7 @@ public class LessonRepository : ILessonRepository
 {
     private readonly ApplicationDbContext _context;
 
-    public LessonRepository(
-        ApplicationDbContext context
-    )
+    public LessonRepository(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -27,9 +24,7 @@ public class LessonRepository : ILessonRepository
     }
 
     // GET BY ID
-    public async Task<LessonModel?> GetSingleLessonByIdAsync(
-        int id
-    )
+    public async Task<LessonModel?> GetSingleLessonByIdAsync(int id)
     {
         return await _context.Lessons
             .AsNoTracking()
@@ -39,7 +34,7 @@ public class LessonRepository : ILessonRepository
             );
     }
 
-    // CREATE
+    // CREATE LESSON
     public async Task<LessonModel> CreateLessonAsync(
         LessonModel lesson
     )
@@ -49,6 +44,48 @@ public class LessonRepository : ILessonRepository
         await _context.SaveChangesAsync();
 
         return lesson;
+    }
+
+    // CREATE ATTENDANCE FOR LESSON
+    public async Task CreateAttendanceForLessonAsync(
+        int lessonId,
+        int groupId
+    )
+    {
+        // Find all students in the group
+        var students = await _context.Users
+            .Where(u =>
+                u.GroupId == groupId &&
+                u.RoleId == 1
+            )
+            .ToListAsync();
+
+        // Create attendance
+        var attendance = new AttendanceModel
+        {
+            LessonId = lessonId,
+            GroupId = groupId,
+            RecordedAt = DateTime.UtcNow
+        };
+
+        _context.StudentAttendances.Add(attendance);
+
+        await _context.SaveChangesAsync();
+
+        // Add every student
+        foreach (var student in students)
+        {
+            _context.AttendanceStudents.Add(
+                new AttendanceStudentModel
+                {
+                    AttendanceId = attendance.AttendanceId,
+                    StudentId = student.UserId,
+                    Status = false
+                }
+            );
+        }
+
+        await _context.SaveChangesAsync();
     }
 
     // UPDATE
@@ -67,21 +104,11 @@ public class LessonRepository : ILessonRepository
             return null;
         }
 
-        existingLesson.GroupId =
-            lesson.GroupId;
-
-        existingLesson.LessonStarts =
-            lesson.LessonStarts;
-
-        existingLesson.LessonEnds =
-            lesson.LessonEnds;
-
-        existingLesson.LocationType =
-            lesson.LocationType;
-
-        existingLesson.Classroom =
-            lesson.Classroom;
-
+        existingLesson.GroupId = lesson.GroupId;
+        existingLesson.LessonStarts = lesson.LessonStarts;
+        existingLesson.LessonEnds = lesson.LessonEnds;
+        existingLesson.LocationType = lesson.LocationType;
+        existingLesson.Classroom = lesson.Classroom;
 
         await _context.SaveChangesAsync();
 
@@ -89,9 +116,7 @@ public class LessonRepository : ILessonRepository
     }
 
     // DELETE
-    public async Task<bool> DeleteLessonAsync(
-        int id
-    )
+    public async Task<bool> DeleteLessonAsync(int id)
     {
         var lesson = await _context.Lessons
             .FirstOrDefaultAsync(
@@ -110,7 +135,9 @@ public class LessonRepository : ILessonRepository
         return true;
     }
 
-    public async Task<GroupModel?> GetGroupByLessonIdAsync(int lessonId)
+    public async Task<GroupModel?> GetGroupByLessonIdAsync(
+        int lessonId
+    )
     {
         return await _context.Lessons
             .AsNoTracking()

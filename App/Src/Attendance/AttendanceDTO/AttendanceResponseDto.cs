@@ -1,20 +1,37 @@
-namespace BackEndCodeTrix.Src.Attendance.AttendanceDTO;
+// namespace BackEndCodeTrix.Src.Attendance.AttendanceDTO;
+
+// public class AttendanceResponseDto
+// {
+//     public int AttendanceId { get; set; }
+
+//     // Student
+//     public int StudentId { get; set; }
+//     public string StudentName { get; set; } = null!;
+//     public string StudentSurname { get; set; } = null!;
+
+//     // Lesson
+//     public int LessonId { get; set; }
+//     public string LessonName { get; set; } = null!;
+
+//     // Attendance
+//     public AttendanceStatus Status { get; set; }
+
+//     public DateTime RecordedAt { get; set; }
+// }
+
+using BackEndCodeTrix.Src.LessonSchedule;
 
 public class AttendanceResponseDto
 {
     public int AttendanceId { get; set; }
 
-    // Student
-    public int StudentId { get; set; }
-    public string StudentName { get; set; } = null!;
-    public string StudentSurname { get; set; } = null!;
-
-    // Lesson
     public int LessonId { get; set; }
-    public string LessonName { get; set; } = null!;
+    public string? LessonName { get; set; }
 
-    // Attendance
-    public AttendanceStatus Status { get; set; }
+    public int GroupId { get; set; }
 
     public DateTime RecordedAt { get; set; }
+
+    public List<AttendanceStudentResponseDto> Students { get; set; }
+        = new();
 }

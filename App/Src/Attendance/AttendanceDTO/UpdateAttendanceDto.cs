@@ -2,5 +2,6 @@ namespace BackEndCodeTrix.Src.LessonSchedule.AttendanceDTO;
 
 public class UpdateAttendanceDto
 {
-    public AttendanceStatus Status { get; set; }
+    public int StudentId { get; set; }
+    public bool Status { get; set; }
 }

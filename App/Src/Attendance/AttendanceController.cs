@@ -137,4 +137,21 @@ public class AttendanceController : ControllerBase
 
         return Ok(attendances);
     }
+
+     // GET /api/lessons/{lessonId}/attendance
+    // [HttpGet("/api/attendance/{attendanceId:int}/users")]
+    // public async Task<IActionResult> GetUserByAttendanceId(int lessonId)
+    // {
+    //     var attendances =
+    //         await _attendanceService
+    //             .GetByLessonIdAsync(lessonId);
+
+    //     if (attendances is null)
+    //     {
+    //         return NotFound(
+    //             new { message = "Lesson not found." });
+    //     }
+
+    //     return Ok(attendances);
+    // }
 }

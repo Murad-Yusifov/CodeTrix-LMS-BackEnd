@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260909195213_AddLessonNameInSeedData")]
-    partial class AddLessonNameInSeedData
+    [Migration("20260918100526_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,10 +20,114 @@ namespace App.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
 
+            modelBuilder.Entity("BackEndCodeTrix.Src.Auth.RefreshTokenModel", b =>
+                {
+                    b.Property<int>("RefreshTokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("RefreshTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("BackEndCodeTrix.Src.Course.CourseModel", b =>
+                {
+                    b.Property<int>("CourseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CourseId");
+
+                    b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("BackEndCodeTrix.Src.CourseRequest.CourseRequestModel", b =>
+                {
+                    b.Property<int>("CourseRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CourseRequestId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CourseRequests");
+                });
+
             modelBuilder.Entity("BackEndCodeTrix.Src.Group.GroupModel", b =>
                 {
                     b.Property<int>("GroupId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CreatedByMentorId")
@@ -38,6 +142,8 @@ namespace App.Migrations
 
                     b.HasKey("GroupId");
 
+                    b.HasIndex("CourseId");
+
                     b.HasIndex("CreatedByMentorId");
 
                     b.ToTable("Groups");
@@ -49,25 +155,51 @@ namespace App.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("GroupId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("LessonId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("RecordedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("UserModelUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AttendanceId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("UserModelUserId");
+
+                    b.ToTable("StudentAttendances");
+                });
+
+            modelBuilder.Entity("BackEndCodeTrix.Src.LessonSchedule.AttendanceStudentModel", b =>
+                {
+                    b.Property<int>("AttendanceStudentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AttendanceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Status")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("AttendanceId");
+                    b.HasKey("AttendanceStudentId");
 
-                    b.HasIndex("LessonId");
+                    b.HasIndex("AttendanceId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentAttendances");
+                    b.ToTable("AttendanceStudents");
                 });
 
             modelBuilder.Entity("BackEndCodeTrix.Src.LessonSchedule.LessonModel", b =>
@@ -232,32 +364,85 @@ namespace App.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BackEndCodeTrix.Src.Auth.RefreshTokenModel", b =>
+                {
+                    b.HasOne("BackEndCodeTrix.Src.Users.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BackEndCodeTrix.Src.CourseRequest.CourseRequestModel", b =>
+                {
+                    b.HasOne("BackEndCodeTrix.Src.Course.CourseModel", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("BackEndCodeTrix.Src.Group.GroupModel", b =>
                 {
+                    b.HasOne("BackEndCodeTrix.Src.Course.CourseModel", "Course")
+                        .WithMany("Groups")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BackEndCodeTrix.Src.Users.UserModel", "CreatedByMentor")
                         .WithMany("CreatedGroups")
                         .HasForeignKey("CreatedByMentorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Course");
+
                     b.Navigation("CreatedByMentor");
                 });
 
             modelBuilder.Entity("BackEndCodeTrix.Src.LessonSchedule.AttendanceModel", b =>
                 {
+                    b.HasOne("BackEndCodeTrix.Src.Group.GroupModel", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BackEndCodeTrix.Src.LessonSchedule.LessonModel", "Lesson")
                         .WithMany()
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BackEndCodeTrix.Src.Users.UserModel", "Student")
+                    b.HasOne("BackEndCodeTrix.Src.Users.UserModel", null)
                         .WithMany("Attendances")
+                        .HasForeignKey("UserModelUserId");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("BackEndCodeTrix.Src.LessonSchedule.AttendanceStudentModel", b =>
+                {
+                    b.HasOne("BackEndCodeTrix.Src.LessonSchedule.AttendanceModel", "Attendance")
+                        .WithMany("Students")
+                        .HasForeignKey("AttendanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackEndCodeTrix.Src.Users.UserModel", "Student")
+                        .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Lesson");
+                    b.Navigation("Attendance");
 
                     b.Navigation("Student");
                 });
@@ -324,6 +509,11 @@ namespace App.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("BackEndCodeTrix.Src.Course.CourseModel", b =>
+                {
+                    b.Navigation("Groups");
+                });
+
             modelBuilder.Entity("BackEndCodeTrix.Src.Group.GroupModel", b =>
                 {
                     b.Navigation("Lessons");
@@ -331,6 +521,11 @@ namespace App.Migrations
                     b.Navigation("Students");
 
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("BackEndCodeTrix.Src.LessonSchedule.AttendanceModel", b =>
+                {
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("BackEndCodeTrix.Src.Tasks.TaskModel", b =>

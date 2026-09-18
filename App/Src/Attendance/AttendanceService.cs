@@ -1,6 +1,4 @@
 using AutoMapper;
-using BackEndCodeTrix.Src.Attendance;
-using BackEndCodeTrix.Src.Attendance.AttendanceDTO;
 using BackEndCodeTrix.Src.LessonSchedule.AttendanceDTO;
 
 namespace BackEndCodeTrix.Src.LessonSchedule;
@@ -123,14 +121,25 @@ public class AttendanceService : IAttendanceService
         UpdateAttendanceDto dto)
     {
         var attendance =
-            await _attendanceRepository.GetByIdAsync(id);
+            await _attendanceRepository
+                .GetByIdAsync(id);
 
         if (attendance is null)
         {
             return null;
         }
 
-        attendance.Status = dto.Status;
+        var studentAttendance =
+            attendance.Students.FirstOrDefault(
+                x => x.StudentId == dto.StudentId);
+
+        if (studentAttendance is null)
+        {
+            return null;
+        }
+
+        studentAttendance.Status = dto.Status;
+
         attendance.RecordedAt = DateTime.UtcNow;
 
         var updated =
@@ -148,6 +157,7 @@ public class AttendanceService : IAttendanceService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        return await _attendanceRepository.DeleteAsync(id);
+        return await _attendanceRepository
+            .DeleteAsync(id);
     }
 }

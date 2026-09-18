@@ -13,11 +13,19 @@ public interface ILessonRepository
         LessonModel lesson
     );
 
+    Task CreateAttendanceForLessonAsync(
+        int lessonId,
+        int groupId
+    );
+
     Task<LessonModel?> UpdateLessonAsync(
         int id,
         LessonModel lesson
     );
 
     Task<bool> DeleteLessonAsync(int id);
-    Task<GroupModel?> GetGroupByLessonIdAsync(int lessonId);
+
+    Task<GroupModel?> GetGroupByLessonIdAsync(
+        int lessonId
+    );
 }

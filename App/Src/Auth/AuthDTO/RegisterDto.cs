@@ -11,6 +11,7 @@ public class RegisterDto
     [Required]
     [MaxLength(100)]
     public string UserSurName { get; set; } = string.Empty;
+    public int RoleId { get; set; }
 
     [Required]
     [EmailAddress]
